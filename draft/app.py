@@ -34,14 +34,6 @@ def search():
     if request.method == 'POST':
         search_term = request.form.get('search-term')
         print('search term ', search_term)
-
-        #get search results
-        results = search_helper.search(search_term)
-
-        if len(results) == 0:
-            flash('No results for that search.')
-            return redirect( url_for('search') )
-
         return render_template('search_results.html', results=['test', 'results'])
 
 @app.route('/greet/', methods=["GET", "POST"])
