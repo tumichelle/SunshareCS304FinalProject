@@ -10,6 +10,7 @@ import cs304dbi as dbi
 # import cs304dbi_sqlite3 as dbi
 
 import random
+import search_helper
 
 app.secret_key = 'your secret here'
 # replace that with a random key
@@ -23,7 +24,25 @@ app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 
 @app.route('/')
 def index():
-    return render_template('main.html',title='Hello')
+    return render_template('main.html')
+
+@app.route('/search/', methods = ['GET', 'POST'])
+def search():
+    if request.method == 'GET':
+        print('request method is get')
+        return render_template('search.html')
+    if request.method == 'POST':
+        search_term = request.form.get('search-term')
+        print('search term ', search_term)
+
+        #get search results
+        results = search_helper.search(search_term)
+
+        if len(results) == 0:
+            flash('No results for that search.')
+            return redirect( url_for('search') )
+
+        return render_template('search_results.html', results=['test', 'results'])
 
 @app.route('/greet/', methods=["GET", "POST"])
 def greet():
@@ -67,7 +86,7 @@ def testform():
 def init_db():
     dbi.cache_cnf()
     # set this local variable to 'wmdb' or your personal or team db
-    db_to_use = 'put_database_name_here_db' 
+    db_to_use = 'sunshare_db' 
     dbi.use(db_to_use)
     print('will connect to {}'.format(db_to_use))
 

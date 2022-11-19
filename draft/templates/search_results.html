@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<h1>Search Results</h1>
+
+<ul>
+    {%for result in results%}
+    <li>{{ result }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
