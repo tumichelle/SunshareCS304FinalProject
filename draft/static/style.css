@@ -2,9 +2,11 @@
 */
 
 HTML {
-    --color-header: #007ea9;  /* color for H1-H6 and others. was deepskyblue but poor contrast. */
+    --color-header: #eac43d;  /* color for H1-H6 and others. was deepskyblue but poor contrast. */
     --color-hilite: #b50000;  /* was red, but this avoids WAVE contrast errors */ 
-    --color-focus: #56B929;
+    --color-focus: #a6cd4e;
+    --color-nice: #14c0cc;
+    --color-nice2: #2a5c99;
     --font-family: Verdana;
     font-family: var(--font-family)
 }
@@ -12,10 +14,13 @@ HTML {
 /* For flashed messages; make them stand out using red and italics */
 
 #messages {
-    color: var(--color-hilite);
+    color: var(--color-nice2);
     font-style: italic;
 }
 
+body{
+    margin:30px
+}
 
 h1 {
     font-size: 200%;
@@ -23,7 +28,7 @@ h1 {
 }
 
 h2, h3 {
-    color: var(--color-header);
+    color: var(--color-nice);
 }
     
 
@@ -42,6 +47,7 @@ nav ul {
 nav > ul > li {
     flex: 0 0 auto;
     width: 15em; 
+    margin: 12px
 }
 
 nav button, nav a {
@@ -49,16 +55,20 @@ nav button, nav a {
     box-sizing: border-box; /* easier to make button and A the same size */
     width: 100%;
     height: 40px;
-    padding: 0px;
+    padding: 2px;
     padding-bottom: 5px;
     background-color: var(--color-header); /* was #3498db */
     border: 2px solid black;
-    border-radius: 5px;
+    border-radius: 20px;
     cursor: pointer;
     /* Firefox uses font -apple-system unless I repeat the font spec here. */
     font-family: var(--font-family);
     font-weight: bold;
     font-size: 1.4rem;
+}
+
+nav button{
+    margin: 20px;
 }
 
 /* Only the top-level buttons are centered; lower ones are left-aligned. */

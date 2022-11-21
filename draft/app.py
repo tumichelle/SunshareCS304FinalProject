@@ -29,12 +29,27 @@ def index():
 @app.route('/search/', methods = ['GET', 'POST'])
 def search():
     if request.method == 'GET':
-        print('request method is get')
         return render_template('search.html')
     if request.method == 'POST':
+        conn = dbi.connect()
+        # get the search/filter term
         search_term = request.form.get('search-term')
-        print('search term ', search_term)
-        return render_template('search_results.html', results=['test', 'results'])
+
+        # depending on whether searching or filtering, 
+        # use appropriate function to get results
+        search_results = []
+        if request.form.get('submit-btn') == 'search!':
+            search_results = search_helper.search(conn, search_term)
+        elif request.form.get('submit-btn') == 'filter!':
+            print('want to filter')
+            #print('search term ', search_term)
+            search_results = search_helper.filter(conn, search_term)
+            print('results', search_results)
+        if len(search_results) > 0:
+            return render_template('search_results.html', results=search_results)
+        else: 
+            flash('No results found.')
+            return redirect( url_for('search') )
 
 @app.route('/greet/', methods=["GET", "POST"])
 def greet():

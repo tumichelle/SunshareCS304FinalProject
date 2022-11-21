@@ -5,7 +5,9 @@
 
 <ul>
     {%for result in results%}
-    <li>{{ result }}</li>
+    <h3>Title: {{ result['title'] }}</h3>
+    <p>Description: {{ result['description'] }}</p>
+    <p>Item type: {{ result['item_type'] }}</p>
     {% endfor %}
 </ul>
 
