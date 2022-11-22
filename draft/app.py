@@ -27,6 +27,7 @@ app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 def index():
     return render_template('main.html')
 
+#Insert form that takes in the post info and creates a new post and a new item
 @app.route('/insert/', methods = ['GET','POST'])
 def insert_post():
     if request.method == 'GET':
@@ -47,17 +48,15 @@ def insert_post():
         flash('Post created successfully')
         return render_template('search_results.html', results=search_results)
 
+#Displays the feed consisting of all of the existing posts
 @app.route('/feed/', methods=['GET'])
 def feed():
     conn = dbi.connect()
     feed_results = search_helper.feed(conn)
-    #print(feed_results)
     post_author = feed_results[0]['name']
-    #user_id = feed_results.user_id
-    #not working yet
-    #post_author = search_helper.get_author(user_id) n
     return render_template('feed.html', posts=feed_results, author = post_author)
 
+#Displays all of the post details given the post_id
 @app.route('/post/<post_id>', methods=['GET'])
 def post_details(post_id):
     conn = dbi.connect()
