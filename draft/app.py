@@ -11,6 +11,7 @@ import cs304dbi as dbi
 
 import random
 import search_helper
+import insert
 
 app.secret_key = 'your secret here'
 # replace that with a random key
@@ -25,6 +26,24 @@ app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 @app.route('/')
 def index():
     return render_template('main.html')
+
+@app.route('/insert/', methods = ['GET','POST'])
+def insert_post():
+    if request.method == 'GET':
+        #returns a blank form
+        return render_template('insert_post.html')
+    else:
+        #process the form
+        conn = dbi.connect()
+        user_id = int(request.form['user_id'])
+        title = request.form['title']
+        description = request.form['description']
+        item_photo = None #feature to be implemented
+        item_type = request.form['item_type']
+        item_id = insert.add_item(conn, description, item_photo, item_type)
+        insert.add_post(conn,user_id,item_id,title)
+        flash('Post created successfully')
+        return redirect(url_for('index'))
 
 @app.route('/search/', methods = ['GET', 'POST'])
 def search():
