@@ -45,6 +45,22 @@ def insert_post():
         flash('Post created successfully')
         return redirect(url_for('index'))
 
+@app.route('/feed/', methods=['GET'])
+def feed():
+    conn = dbi.connect()
+    feed_results = search_helper.feed(conn)
+    #print(feed_results[0]['name'])
+    #user_id = feed_results.user_id
+    #not working yet
+    #post_author = search_helper.get_author(user_id) n
+    return render_template('feed.html', posts=feed_results)
+
+@app.route('/post/<post_id>', methods=['GET'])
+def post_details(post_id):
+    conn = dbi.connect()
+    search_results = [search_helper.search_by_postid(conn, post_id)]
+    return render_template('search_results.html', results=search_results)
+
 @app.route('/search/', methods = ['GET', 'POST'])
 def search():
     if request.method == 'GET':

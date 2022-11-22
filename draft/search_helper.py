@@ -28,6 +28,26 @@ def search(conn, search_key):
     #print(type(matches))
     return matches
 
+def search_by_postid(conn, post_id):
+    curs = dbi.dict_cursor(conn)
+    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) WHERE post_id = %s '''
+    curs.execute(sql, [post_id])
+    match = curs.fetchone()
+    return match
+
+def feed(conn):
+    curs = dbi.dict_cursor(conn)
+    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) ORDER BY timestamp DESC'''
+    curs.execute(sql) 
+    matches = curs.fetchall()
+    return matches
+
+def get_author(conn, user_id):
+    curs = dbi.dict_cursor(conn)
+    sql = '''SELECT name FROM user where user_id=%s'''
+    curs.execute(sql, [user_id]) 
+    return curs.fetchone()
+
 def filter(conn, category):
     curs = dbi.dict_cursor(conn)
     #category  = '"'+category+'"'
