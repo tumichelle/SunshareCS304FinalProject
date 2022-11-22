@@ -57,19 +57,11 @@ def feed():
     return render_template('feed.html', posts=feed_results, author = post_author)
 
 #Displays all of the post details given the post_id
-@app.route('/post/<post_id>', methods=['GET', 'POST'])
+@app.route('/post/<post_id>', methods=['GET'])
 def post_details(post_id):
     conn = dbi.connect()
     search_results = [search_helper.search_by_postid(conn, post_id)]
-    if request.method == 'GET':
-        return render_template('search_results.html', results=search_results)
-    if request.method == 'POST':
-        user_id = int(request.form['user_id'])
-        comment = request.form['comment']
-        insert.add_comment(conn,user_id,comment)
-        search_results = [insert.new_comment_details(conn)]
-        flash('Comment submitted')
-        return render_template('search_results.html', results=search_results)
+    return render_template('search_results.html', results=search_results)
 
 @app.route('/search/', methods = ['GET', 'POST'])
 def search():
@@ -94,7 +86,7 @@ def search():
             return render_template('search_results.html', results=search_results)
         else: 
             flash('No results found.')
-            return redirect( url_for('search'))
+            return redirect( url_for('search') )
 
 @app.route('/greet/', methods=["GET", "POST"])
 def greet():
