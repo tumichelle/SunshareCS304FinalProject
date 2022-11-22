@@ -10,6 +10,13 @@ def add_post(conn,user_id,item_id,title):
         [user_id,item_id,title])
     conn.commit()
 
+def new_post_details(conn):
+    '''get details of post just made
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''select * from post INNER JOIN item USING (item_id) where post_id = last_insert_id()''')
+    return curs.fetchone()
+
 def add_item(conn, description, item_photo, item_type):
     '''adds an item given the information in the insert form
     '''

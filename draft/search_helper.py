@@ -37,7 +37,7 @@ def search_by_postid(conn, post_id):
 
 def feed(conn):
     curs = dbi.dict_cursor(conn)
-    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) ORDER BY timestamp DESC'''
+    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) INNER JOIN user USING (user_id) ORDER BY timestamp DESC'''
     curs.execute(sql) 
     matches = curs.fetchall()
     return matches

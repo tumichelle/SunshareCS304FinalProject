@@ -42,18 +42,21 @@ def insert_post():
         item_type = request.form['item_type']
         item_id = insert.add_item(conn, description, item_photo, item_type)
         insert.add_post(conn,user_id,item_id,title)
+        search_results = insert.new_post_details(conn)
+        print(search_results)
         flash('Post created successfully')
-        return redirect(url_for('index'))
+        return render_template('search_results.html', results=search_results)
 
 @app.route('/feed/', methods=['GET'])
 def feed():
     conn = dbi.connect()
     feed_results = search_helper.feed(conn)
-    #print(feed_results[0]['name'])
+    #print(feed_results)
+    post_author = feed_results[0]['name']
     #user_id = feed_results.user_id
     #not working yet
     #post_author = search_helper.get_author(user_id) n
-    return render_template('feed.html', posts=feed_results)
+    return render_template('feed.html', posts=feed_results, author = post_author)
 
 @app.route('/post/<post_id>', methods=['GET'])
 def post_details(post_id):
