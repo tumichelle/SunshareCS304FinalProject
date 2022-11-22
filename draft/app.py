@@ -42,7 +42,7 @@ def insert_post():
         item_type = request.form['item_type']
         item_id = insert.add_item(conn, description, item_photo, item_type)
         insert.add_post(conn,user_id,item_id,title)
-        search_results = insert.new_post_details(conn)
+        search_results = [insert.new_post_details(conn)]
         print(search_results)
         flash('Post created successfully')
         return render_template('search_results.html', results=search_results)
