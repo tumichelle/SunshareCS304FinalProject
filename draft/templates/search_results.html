@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<h1>Results</h1>
+
+<ul>
+    {% for result in results %}
+    <li><h2>{{result['title']}}</h2>
+    <p>{{result['description']}}</p>
+    </li>
+    {%endfor%}
+</ul>
+
+{% endblock %}
