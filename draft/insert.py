@@ -30,14 +30,14 @@ def add_item(conn, description, item_photo, item_type):
     row = curs.fetchone()
     return row[0] #returns the item_id
 
-def add_comment(conn, user_id, comment):
+def add_comment(conn,user_id,comment):
     '''
     inserts a comment into the comment table
     '''
     curs = dbi.cursor(conn)
     curs.execute('''
         INSERT INTO comment (user_id, comment)
-        values (%s,%s)''', [comment])
+        values (%s,%s)''', [user_id,comment])
     conn.commit()
     curs.execute('''select last_insert_id()''')
     row = curs.fetchone()
