@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<h1>Results</h1>
+
+<ul>
+    {% for result in results %}
+    <li><h2>{{result['title']}}</h2>
+    <p>{{result['description']}}</p>
+    </li>
+    {%endfor%}
+</ul>
+
+<form method="POST" action="{{url_for('insert_post')}}">
+
+    <fieldset>
+    <legend>Add comment:</legend>
+    <table>
+    <tr><td><label for="user_id">User ID:</label></td>
+        <td><input id="user_id" type="text" name="user_id"></td></tr>
+    <tr><td><label for="comment">Comment:</label></td>
+        <td><input id="comment" type="text" name="comment"></td></tr>
+    </table>
+    </fieldset>
+
+    <p> <input class = button type='submit' value='Add Comment'> </p>
+
+</form>
+
+{% endblock %}
