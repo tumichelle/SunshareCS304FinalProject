@@ -13,6 +13,7 @@ import cs304dbi as dbi
 import random
 import search_helper
 import insert
+import cs304login
 
 app.secret_key = 'your secret here'
 # replace that with a random key
@@ -25,6 +26,10 @@ app.secret_key = ''.join([ random.choice(('ABCDEFGHIJKLMNOPQRSTUVXYZ' +
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 
 @app.route('/')
+def startup():
+    return render_template('login_page.html')
+
+@app.route('/home/')
 def index():
     return render_template('main.html')
 
@@ -88,7 +93,6 @@ def search():
             search_results = search_helper.search(conn, search_term)
         elif request.form.get('submit-btn') == 'filter!':
             print('want to filter')
-            #print('search term ', search_term)
             search_results = search_helper.filter(conn, search_term)
             print('results', search_results)
         if len(search_results) > 0:
@@ -97,11 +101,119 @@ def search():
             flash('No results found.')
             return redirect( url_for('search'))
 
+@app.route('/join/', methods=["POST"])
+def join():
+    '''route for creating a new user. redirects to home page.'''
+    try:
+        username = request.form['username']
+        passwd1 = request.form['password1']
+        passwd2 = request.form['password2']
+        if passwd1 != passwd2:
+            flash('passwords do not match')
+            return redirect( url_for('index'))
+        hashed = passwd1
+        print(passwd1, type(passwd1))
+        conn = dbi.connect()
+        curs = dbi.cursor(conn)
+        try:
+            curs.execute('''INSERT INTO userpass(uid,username,hashed)
+                            VALUES(null,%s,%s)''',
+                        [username, hashed])
+            conn.commit()
+        except Exception as err:
+            flash('That username is taken: {}'.format(repr(err)))
+            return redirect(url_for('index'))
+        curs.execute('select last_insert_id()')
+        row = curs.fetchone()
+        uid = row[0]
+        flash('FYI, you were issued UID {}'.format(uid))
+        session['username'] = username
+        session['uid'] = uid
+        session['logged_in'] = True
+        session['visits'] = 1
+        return redirect( url_for('user', username=username) )
+    except Exception as err:
+        flash('form submission error '+str(err))
+        return redirect( url_for('index') )
+
+@app.route('/login/', methods=["POST"])
+def login():
+    '''route for if an already created user is logging in.'''
+    try:
+        username = request.form['username']
+        passwd = request.form['password']
+        conn = dbi.connect()
+        curs = dbi.dict_cursor(conn)
+        curs.execute('''SELECT uid,hashed
+                      FROM userpass
+                      WHERE username = %s''',
+                     [username])
+        row = curs.fetchone()
+        if row is None:
+            # Same response as wrong password,
+            # so no information about what went wrong
+            flash('login incorrect. Try again or join')
+            return redirect( url_for('index'))
+        hashed = row['hashed']
+        if hashed == passwd:
+            flash('successfully logged in as '+username)
+            session['username'] = username
+            session['uid'] = row['uid']
+            session['logged_in'] = True
+            session['visits'] = 1
+            return redirect( url_for('user', username=username) )
+        else:
+            flash('login incorrect. Try again or join')
+            return redirect( url_for('index'))
+    except Exception as err:
+        flash('form submission error '+str(err))
+        return redirect( url_for('index') )
+
+@app.route('/user/<username>')
+def user(username):
+    '''@TODO figure out what this function does'''
+    try:
+        # don't trust the URL; it's only there for decoration
+        if 'username' in session:
+            username = session['username']
+            uid = session['uid']
+            session['visits'] = 1+int(session['visits'])
+            return redirect(url_for('index'))
+            # return render_template('greet.html',
+            #                        page_title='My App: Welcome {}'.format(username),
+            #                        name=username,
+            #                        uid=uid,
+            #                        visits=session['visits'])
+
+        else:
+            flash('you are not logged in. Please login or join')
+            return redirect( url_for('index') )
+    except Exception as err:
+        flash('some kind of error '+str(err))
+        return redirect( url_for('index') )
+
+@app.route('/logout/', methods = ["POST"])
+def logout():
+    '''logout route.'''
+    try:
+        if 'username' in session:
+
+            username = session['username']
+            session.pop('username')
+            session.pop('uid')
+            session.pop('logged_in')
+            flash('You are logged out')
+            return redirect(url_for('startup'))
+        else:
+            flash('you are not logged in. Please login or join')
+            return redirect( url_for('index') )
+    except Exception as err:
+        flash('some kind of error '+str(err))
+        return redirect( url_for('startup') )
 
 @app.before_first_request
 def init_db():
     dbi.cache_cnf()
-    # set this local variable to 'wmdb' or your personal or team db
     db_to_use = 'sunshare_db' 
     dbi.use(db_to_use)
     print('will connect to {}'.format(db_to_use))
