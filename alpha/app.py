@@ -10,7 +10,8 @@ app = Flask(__name__)
 import cs304dbi as dbi
 # import cs304dbi_sqlite3 as dbi
 
-import random
+import sys, os, random
+import imghdr
 import search_helper
 import insert
 import cs304login
@@ -25,6 +26,10 @@ app.secret_key = ''.join([ random.choice(('ABCDEFGHIJKLMNOPQRSTUVXYZ' +
 # This gets us better error messages for certain common request errors
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 
+# new for file upload
+app.config['UPLOADS'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 1*1024*1024 # 1 MB
+
 @app.route('/')
 def startup():
     return render_template('login_page.html')
@@ -32,6 +37,19 @@ def startup():
 @app.route('/home/')
 def index():
     return render_template('main.html')
+
+@app.route('/pic/<item_id>')
+def pic(item_id):
+    conn = dbi.connect()
+    curs = dbi.dict_cursor(conn)
+    numrows = curs.execute(
+        '''select filename from picfile where item_id = %s''',
+        [item_id])
+    if numrows == 0:
+        flash('No picture for {}'.format(item_id))
+        return redirect(url_for('index'))
+    row = curs.fetchone()
+    return send_from_directory(app.config['UPLOADS'],row['filename'])
 
 #Insert form that takes in the post info and creates a new post and a new item
 @app.route('/insert/', methods = ['GET','POST'])
@@ -45,14 +63,30 @@ def insert_post():
         user_id = int(request.form['user_id'])
         title = request.form['title']
         description = request.form['description']
-        item_photo = None #feature to be implemented
         item_type = request.form['item_type']
+        item_photo = request.files['item_photo'] #feature to be implemented
         item_id = insert.add_item(conn, description, item_photo, item_type)
         insert.add_post(conn,user_id,item_id,title)
         search_results = [insert.new_post_details(conn)]
         print(search_results)
         flash('Post created successfully')
-        return render_template('search_results.html', results=search_results)
+
+        user_filename = item_photo.filename
+        ext = user_filename.split('.')[-1]
+        filename = secure_filename('{}.{}'.format(item_id,ext))
+        pathname = os.path.join(app.config['UPLOADS'],filename)
+        item_photo.save(pathname)
+        conn = dbi.connect()
+        curs = dbi.dict_cursor(conn)
+        curs.execute(
+            '''
+            insert into picfile(item_id, filename) values (%s, %s)
+            on duplicate key update filename = %s
+            ''', [item_id, filename, filename]
+        )
+        conn.commit()
+        flash('file upload successful')
+        return render_template('search_results.html', src=url_for('pic',item_id=item_id), results=search_results)
 
 #Displays the feed consisting of all of the existing posts
 @app.route('/feed/', methods=['GET'])
