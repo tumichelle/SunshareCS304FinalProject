@@ -26,12 +26,22 @@ app.secret_key = ''.join([ random.choice(('ABCDEFGHIJKLMNOPQRSTUVXYZ' +
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 
 @app.route('/')
-def startup():
-    return render_template('login_page.html')
-
-@app.route('/home/')
 def index():
     return render_template('main.html')
+
+@app.route('/example_feed/', methods = ['POST'])
+def example_feed():
+    conn = dbi.connect()
+    zipcode = request.form['zipcode']
+    filtered = search_helper.filter_zip(conn, zipcode)
+    if len(filtered) == 0:
+        flash('There are no posts in your area')
+        return render_template('main.html')
+    return render_template('example_feed.html', posts = filtered)
+
+@app.route('/home/')
+def startup():
+    return render_template('login_page.html')
 
 #Insert form that takes in the post info and creates a new post and a new item
 @app.route('/insert/', methods = ['GET','POST'])

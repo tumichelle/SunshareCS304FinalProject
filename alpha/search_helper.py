@@ -85,10 +85,9 @@ This only allow to search by one zip.
 '''
 def filter_zip(conn, zipcode):
     curs = dbi.dict_cursor(conn)
-
-    sql = '''SELECT post_id FROM post INNER JOIN user USING (user_id) WHERE user.zip_code = %s'''
-    filtered = curs.execute(sql, [zipcode])
-    
+    sql = '''SELECT * FROM post INNER JOIN user USING (user_id) WHERE user.zip_code = %s'''
+    curs.execute(sql, [zipcode])
+    filtered = curs.fetchall()
     return filtered
 
 if __name__ == '__main__':

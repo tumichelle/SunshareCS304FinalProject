@@ -3,7 +3,18 @@
 {% block main_content %}
 <h1>Hello and Welcome to Sunshare!</h1>
 
-<p>To insert a post, visit this <a href="{{ url_for('insert_post') }}">post creation</a> page.</p>
-<p>To view posts, visit <a href="{{ url_for('feed') }}">your feed</a></p>
+<form id="exampleform" action="{{url_for('example_feed')}}" method="post">
+  <h2>Enter your zip code to view posts in your area</h2>
+  <p><label>Zip Code: <input type="text" name="zipcode" required pattern="[0-9]*"></label></p>
+  <p><button type="submit">Submit</button></p>
+</form>
+
+<nav>
+    <ul>
+      <li>New user? <a href="{{url_for('join')}}">Create an account here</a></li>
+      <li>Returning user? <a href="{{url_for('startup')}}">Sign in here</a></li>
+    </ul>
+</nav>
+
 
 {% endblock %}
