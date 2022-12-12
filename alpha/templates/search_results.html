@@ -7,6 +7,11 @@
     {% for result in results %}
     <li><h2>{{result['title']}}</h2>
     <p>{{result['description']}}</p>
+    <!-- display photo -->
+    {% if item_id != '' and src != '' %}
+    <!-- <p>{{result['filename']}} with item_id {{result['item_id']}}</p> -->
+    <p><img src="{{url_for('pic', item_id=result['item_id'])}}" alt="{{result['filename']}}"></p>
+    {% endif %}
     </li>
     {%endfor%}
 </ul>
