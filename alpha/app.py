@@ -126,7 +126,10 @@ def post_details(post_id):
         user_id = int(request.form['user_id'])
         comment = request.form['comment']
         insert.add_comment(conn,user_id,comment,post_id)
-        comments += insert.new_comment_details(conn)
+        if len(comments) == 0:
+            comments = insert.new_comment_details(conn)
+        else:
+            comments += insert.new_comment_details(conn)
         flash('Comment submitted')
         return render_template('post.html', post=post, comments=comments)
 
