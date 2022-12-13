@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<h1>Results</h1>
+
+<ul>
+    <li><h2>{{post['title']}}</h2>
+    <p>{{post['description']}}</p>
+    <p>{{post['timestamp']}}</p>
+    <!-- display photo -->
+    {% if item_id != '' and src != '' %}
+    <p><img src="{{url_for('pic', item_id=post['item_id'])}}" alt="{{post['filename']}}"></p>
+    {% endif %}
+    </li>
+</ul>
+
+<ul>
+    {% for comment in comments %}
+    <li>
+        <h4>{{comment['text']}}</h4>
+        <p>User {{comment['posted_by']}}</p>
+        <p>{{comment['timestamp']}}</p>
+    </li>
+    {%endfor%}
+</ul>
+
+
+<form method="POST" action="{{url_for('post_details', post_id=post['post_id'])}}">
+
+    <fieldset>
+    <legend>Add comment:</legend>
+    <table>
+    <tr><td><label for="user_id">User ID:</label></td>
+        <td><input id="user_id" type="text" name="user_id"></td></tr>
+    <tr><td><label for="comment">Comment:</label></td>
+        <td><input id="comment" type="text" name="comment"></td></tr>
+    </table>
+    </fieldset>
+
+    <p> <input class = button type='submit' value='Add Comment'> </p>
+
+</form>
+
+{% endblock %}

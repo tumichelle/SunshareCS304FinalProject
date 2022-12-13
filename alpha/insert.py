@@ -31,14 +31,14 @@ def add_item(conn, description, item_photo, item_type):
     row = curs.fetchone()
     return row[0] #returns the item_id
 
-def add_comment(conn,user_id,comment):
+def add_comment(conn,user_id,comment,post_id):
     '''
     inserts a comment into the comment table
     '''
     curs = dbi.cursor(conn)
     curs.execute('''
-        INSERT INTO comment (user_id, comment)
-        values (%s,%s)''', [user_id,comment])
+        INSERT INTO comment (posted_by, text, post_id)
+        values (%s,%s,%s)''', [user_id,comment,post_id])
     conn.commit()
     curs.execute('''select last_insert_id()''')
     row = curs.fetchone()
@@ -49,4 +49,11 @@ def new_comment_details(conn):
     '''
     curs = dbi.dict_cursor(conn)
     curs.execute('''select * from comment where comment_id = last_insert_id()''')
-    return curs.fetchone()
+    return curs.fetchall()
+
+def all_comments(conn, post_id):
+    '''get details of all the comments for this post
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''select * from comment where post_id = %s''', [post_id])
+    return curs.fetchall()
