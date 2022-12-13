@@ -44,9 +44,15 @@ def example_feed():
         return render_template('main.html')
     return render_template('example_feed.html', posts = filtered)
 
-@app.route('/home/')
-def startup():
+#@app.route('/home/')
+@app.route('/login_page/')
+def login_page():
     return render_template('login_page.html')
+
+@app.route('/signup_page/')
+def signup_page():
+    return render_template('signup_page.html')
+
 @app.route('/pic/<item_id>')
 def pic(item_id):
     conn = dbi.connect()
@@ -246,13 +252,13 @@ def logout():
             session.pop('uid')
             session.pop('logged_in')
             flash('You are logged out')
-            return redirect(url_for('startup'))
+            return redirect(url_for('index'))
         else:
             flash('you are not logged in. Please login or join')
             return redirect( url_for('index') )
     except Exception as err:
         flash('some kind of error '+str(err))
-        return redirect( url_for('startup') )
+        return redirect( url_for('index') )
 
 @app.before_first_request
 def init_db():
