@@ -233,19 +233,12 @@ def login():
 
 @app.route('/user/<username>')
 def user(username):
-    '''@TODO figure out what this function does'''
     try:
-        # don't trust the URL; it's only there for decoration
         if 'username' in session:
             username = session['username']
             uid = session['uid']
             session['visits'] = 1+int(session['visits'])
             return redirect(url_for('index'))
-            # return render_template('greet.html',
-            #                        page_title='My App: Welcome {}'.format(username),
-            #                        name=username,
-            #                        uid=uid,
-            #                        visits=session['visits'])
 
         else:
             flash('you are not logged in. Please login or join')
