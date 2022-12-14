@@ -115,16 +115,23 @@ def feed():
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post_details(post_id):
     conn = dbi.connect()
-    search_results = [search_helper.search_by_postid(conn, post_id)]
+    post = [search_helper.search_by_postid(conn, post_id)][0]
+    comments = insert.all_comments(conn, post_id)
+    print(comments)
     if request.method == 'GET':
-        return render_template('search_results.html', results=search_results)
+        print('get')
+        return render_template('post.html', post=post, comments=comments)
     if request.method == 'POST':
+        print('post')
         user_id = int(request.form['user_id'])
         comment = request.form['comment']
-        insert.add_comment(conn,user_id,comment)
-        search_results = [insert.new_comment_details(conn)]
+        insert.add_comment(conn,user_id,comment,post_id)
+        if len(comments) == 0:
+            comments = insert.new_comment_details(conn)
+        else:
+            comments += insert.new_comment_details(conn)
         flash('Comment submitted')
-        return render_template('search_results.html', results=search_results)
+        return render_template('post.html', post=post, comments=comments)
 
 @app.route('/search/', methods = ['GET', 'POST'])
 def search():
