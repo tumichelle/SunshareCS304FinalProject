@@ -26,8 +26,8 @@ app.secret_key = ''.join([ random.choice(('ABCDEFGHIJKLMNOPQRSTUVXYZ' +
 # This gets us better error messages for certain common request errors
 app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 
-# new for file upload
-app.config['UPLOADS'] = 'uploads'
+# For file upload
+app.config['UPLOADS'] = 'uploads' # save file uploads to 'uploads' folder
 app.config['MAX_CONTENT_LENGTH'] = 1*1024*1024 # 1 MB
 
 @app.route('/')
@@ -53,19 +53,6 @@ def login_page():
 def signup_page():
     return render_template('signup_page.html')
 
-@app.route('/pic/<item_id>')
-def pic(item_id):
-    conn = dbi.connect()
-    curs = dbi.dict_cursor(conn)
-    numrows = curs.execute(
-        '''select filename from picfile where item_id = %s''',
-        [item_id])
-    if numrows == 0:
-        flash('No picture for {}'.format(item_id))
-        return redirect(url_for('index'))
-    row = curs.fetchone()
-    return send_from_directory(app.config['UPLOADS'],row['filename'])
-
 #Insert form that takes in the post info and creates a new post and a new item
 @app.route('/insert/', methods = ['GET','POST'])
 def insert_post():
@@ -79,13 +66,14 @@ def insert_post():
         title = request.form['title']
         description = request.form['description']
         item_type = request.form['item_type']
-        item_photo = request.files['item_photo'] #feature to be implemented
+        item_photo = request.files['item_photo']
         item_id = insert.add_item(conn, description, item_photo, item_type)
         insert.add_post(conn,user_id,item_id,title)
         search_results = [insert.new_post_details(conn)]
         print(search_results)
         flash('Post created successfully')
 
+        #name, save, and insert item_photo into the picfile table
         user_filename = item_photo.filename
         ext = user_filename.split('.')[-1]
         filename = secure_filename('{}.{}'.format(item_id,ext))

@@ -1,3 +1,5 @@
+-- creates a new table picfile with item_id (foreign key) and filename
+
 drop table if exists picfile;
 create table picfile (
     item_id int primary key,
