@@ -2,7 +2,7 @@
 */
 
 HTML {
-    --color-header: #eac43d;  /* color for H1-H6 and others. was deepskyblue but poor contrast. */
+    --color-header: #290101;  /* color for H1-H6 and others. was deepskyblue but poor contrast. */
     --color-hilite: #b50000;  /* was red, but this avoids WAVE contrast errors */ 
     --color-focus: #a6cd4e;
     --color-nice: #14c0cc;
