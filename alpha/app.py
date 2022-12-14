@@ -30,10 +30,12 @@ app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 app.config['UPLOADS'] = 'uploads' # save file uploads to 'uploads' folder
 app.config['MAX_CONTENT_LENGTH'] = 1*1024*1024 # 1 MB
 
+#main page on startup
 @app.route('/')
 def index():
     return render_template('main.html')
 
+#Shows example feed for visiting without an account
 @app.route('/example_feed/', methods = ['POST'])
 def example_feed():
     conn = dbi.connect()
@@ -44,11 +46,12 @@ def example_feed():
         return render_template('main.html')
     return render_template('example_feed.html', posts = filtered)
 
-#@app.route('/home/')
+#page to sign in with existing account
 @app.route('/login_page/')
 def login_page():
     return render_template('login_page.html')
 
+#join and create a new account
 @app.route('/signup_page/')
 def signup_page():
     return render_template('signup_page.html')
@@ -106,14 +109,17 @@ def post_details(post_id):
     post = [search_helper.search_by_postid(conn, post_id)][0]
     comments = insert.all_comments(conn, post_id)
     print(comments)
+    #post viewing
     if request.method == 'GET':
         print('get')
         return render_template('post.html', post=post, comments=comments)
+    #writing a comment
     if request.method == 'POST':
         print('post')
         user_id = int(request.form['user_id'])
         comment = request.form['comment']
         insert.add_comment(conn,user_id,comment,post_id)
+        #writing the first comment
         if len(comments) == 0:
             comments = insert.new_comment_details(conn)
         else:
