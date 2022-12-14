@@ -127,6 +127,10 @@ def post_details(post_id):
         flash('Comment submitted')
         return render_template('post.html', post=post, comments=comments)
 
+'''
+displays the search/filter page on GET
+searches/filters and displays results if found on POST
+'''
 @app.route('/search/', methods = ['GET', 'POST'])
 def search():
     if request.method == 'GET':
@@ -151,10 +155,11 @@ def search():
             flash('No results found.')
             return redirect( url_for('search'))
 
+'''route for creating a new user. redirects to home page.'''
 @app.route('/join/', methods=["POST"])
 def join():
-    '''route for creating a new user. redirects to home page.'''
     try:
+        #getting form info
         username = request.form['username']
         passwd1 = request.form['password1']
         passwd2 = request.form['password2']
@@ -162,7 +167,9 @@ def join():
             flash('passwords do not match')
             return redirect( url_for('index'))
         hashed = passwd1
-        print(passwd1, type(passwd1))
+        #print(passwd1, type(passwd1))
+        #insert data into userpass. 
+        #in beta will move this to a python helper module
         conn = dbi.connect()
         curs = dbi.cursor(conn)
         try:
@@ -186,10 +193,13 @@ def join():
         flash('form submission error '+str(err))
         return redirect( url_for('index') )
 
+'''
+handler for when login form is filled out
+'''
 @app.route('/login/', methods=["POST"])
 def login():
-    '''route for if an already created user is logging in.'''
     try:
+        #get form data
         username = request.form['username']
         passwd = request.form['password']
         conn = dbi.connect()
@@ -205,6 +215,7 @@ def login():
             flash('login incorrect. Try again or join')
             return redirect( url_for('index'))
         hashed = row['hashed']
+        #making sure it is a valid user with password 
         if hashed == passwd:
             flash('successfully logged in as '+username)
             session['username'] = username
@@ -219,6 +230,9 @@ def login():
         flash('form submission error '+str(err))
         return redirect( url_for('index') )
 
+'''
+handler for routing back to home page after logging in
+'''
 @app.route('/user/<username>')
 def user(username):
     try:
@@ -235,13 +249,16 @@ def user(username):
         flash('some kind of error '+str(err))
         return redirect( url_for('index') )
 
+'''
+logout handler. button to log out not on app at the moment, 
+adding in beta.
+'''
 @app.route('/logout/', methods = ["POST"])
 def logout():
-    '''logout route.'''
     try:
         if 'username' in session:
-
             username = session['username']
+            #remove all user info from session
             session.pop('username')
             session.pop('uid')
             session.pop('logged_in')
