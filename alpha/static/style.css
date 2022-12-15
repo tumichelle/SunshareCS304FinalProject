@@ -57,7 +57,7 @@ nav button, nav a {
     height: 40px;
     padding: 2px;
     padding-bottom: 5px;
-    background-color: var(--color-header); /* was #3498db */
+    /* background-color: var(--color-header); was #3498db */
     border: 2px solid black;
     border-radius: 20px;
     cursor: pointer;
