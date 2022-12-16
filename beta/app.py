@@ -156,6 +156,23 @@ def search():
             flash('No results found.')
             return redirect( url_for('search'))
 
+@app.route('/profile/')
+def profile():
+    try: 
+        if 'username' in session:
+            username = session['username']
+            fullname = session['fullname']
+            email = session['email']
+            zipcode = session['zipcode']
+            return render_template('profile.html', username=username, fullname=fullname, email=email, zipcode=zipcode,)
+        else:
+            flash('you\'re not logged in, can\'t view profile.')
+            return redirect(url_for('index'))
+    except Exception as err:
+        flash('form submission error '+str(err))
+        return redirect( url_for('index') )
+
+
 '''route for creating a new user. redirects to home page.'''
 @app.route('/join/', methods=["POST"])
 def join():
@@ -205,6 +222,9 @@ def join():
         session['username'] = username
         session['uid'] = uid
         session['logged_in'] = True
+        session['fullname'] = fullname
+        session['email'] =  email
+        session['zipcode'] = zipcode
         #session['visits'] = 1
         return redirect( url_for('index') )
     except Exception as err:
@@ -227,6 +247,12 @@ def login():
             session['username'] = username
             session['uid'] = uid
             session['logged_in'] = True
+            #get the other users information!!
+            conn2 = dbi.connect()
+            fullname, email, zipcode = login_helper.get_user_info(conn2, uid)
+            session['fullname'] = fullname
+            session['email'] =  email
+            session['zipcode'] = zipcode
             #session['visits'] = 1
             return redirect( url_for('index') )
         else: 
@@ -292,6 +318,9 @@ def logout():
             session.pop('username')
             session.pop('uid')
             session.pop('logged_in')
+            session.pop('fullname') 
+            session.pop('email')
+            session.pop('zipcode')
             flash('You are logged out')
             return redirect(url_for('index'))
         else:

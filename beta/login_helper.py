@@ -65,6 +65,14 @@ success and returns the uid as the second value on success. Otherwise, False, Fa
         # password incorrect
         return (False, False)
 
+def get_user_info(conn, uid):
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''SELECT email, name, zip_code FROM user WHERE user_id = %s''',
+                 [uid])
+    userinfo = curs.fetchone()
+    return userinfo['name'], userinfo['email'], userinfo['zip_code']
+
+
 def delete_user(conn, username):
     '''deletes from userpass. '''
     curs = dbi.cursor(conn)
