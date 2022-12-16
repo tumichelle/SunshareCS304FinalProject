@@ -6,7 +6,7 @@ import cs304dbi as dbi
 import pymysql
 import bcrypt
 
-def insert_user(conn, username, password):
+def insert_userpass(conn, username, password):
     '''inserts given username & password into the userpass table.  Returns
 three values: the uid, whether there was a duplicate key error, and
 either false or an exception object.
@@ -31,6 +31,20 @@ either false or an exception object.
             print('some other error!')
             return (False, False, err)
 
+def insert_user(conn, fullname, uid, zipcode, email):
+    '''
+    inserts new user information into the user table.  Returns true if 
+    the action was successful, otherwise returns False.
+    '''
+    curs = dbi.cursor(conn)
+    try: 
+        curs.execute('''INSERT INTO user(user_id, email, name, zip_code) VALUES(%s, %s, %s, %s)''',
+                     [uid, email, fullname, zipcode])
+        conn.commit()
+        return True
+    except Exception as err:
+        return False
+
 def login_user(conn, username, password):
     '''tries to log the user in given username & password. Returns True if
 success and returns the uid as the second value on success. Otherwise, False, False.'''
@@ -52,6 +66,7 @@ success and returns the uid as the second value on success. Otherwise, False, Fa
         return (False, False)
 
 def delete_user(conn, username):
+    '''deletes from userpass. '''
     curs = dbi.cursor(conn)
     curs.execute('''DELETE FROM userpass WHERE username = %s''',
                  [username])
