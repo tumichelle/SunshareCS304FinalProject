@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<h1>Your Profile</h1>
+
+<p>Happy gardening, {{ fullname }}!</p>
+<p>Username: {{ username }}</p>
+<p>Email: {{ email }}</p>
+<p>ZIP code: {{ zipcode }}</p>
+
+<form id="logout" action="{{url_for('logout')}}" method="post">
+    <p><button type="logout">Log out</button></p>
+</form>
+
+<p>Here are your posts: </p>
+
+
+{% endblock %}
