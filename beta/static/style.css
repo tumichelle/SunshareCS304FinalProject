@@ -1,0 +1,88 @@
+/* the --color-header and others are CSS variables, which we access later. 
+*/
+
+HTML {
+    --color-header: #290101;  /* color for H1-H6 and others. was deepskyblue but poor contrast. */
+    --color-hilite: #b50000;  /* was red, but this avoids WAVE contrast errors */ 
+    --color-focus: #a6cd4e;
+    --color-nice: #14c0cc;
+    --color-nice2: #2a5c99;
+    --font-family: Verdana;
+    font-family: var(--font-family)
+}
+
+/* For flashed messages; make them stand out using red and italics */
+
+#messages {
+    color: var(--color-nice2);
+    font-style: italic;
+}
+
+body{
+    margin:30px
+}
+
+h1 {
+    font-size: 200%;
+    color: var(--color-header);
+}
+
+h2, h3 {
+    color: var(--color-nice);
+}
+    
+
+/* for a simple navbar. Talk to Scott if you want drop-downs. */
+nav > ul {
+    display: flex;
+    flex-direction: row;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+nav > ul > li {
+    flex: 0 0 auto;
+    width: 15em; 
+    margin: 12px
+}
+
+nav button, nav a {
+    display: block;
+    box-sizing: border-box; /* easier to make button and A the same size */
+    width: 100%;
+    height: 40px;
+    padding: 2px;
+    padding-bottom: 5px;
+    /* background-color: var(--color-header); was #3498db */
+    border: 2px solid black;
+    border-radius: 20px;
+    cursor: pointer;
+    /* Firefox uses font -apple-system unless I repeat the font spec here. */
+    font-family: var(--font-family);
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+nav button{
+    margin: 20px;
+}
+
+/* Only the top-level buttons are centered; lower ones are left-aligned. */
+nav > ul > li > button , nav > ul > li > a {
+    text-align: center;
+}
+
+/* because of the margin trick, this can only be used for the last element */
+
+nav li.right {
+    margin-left: auto;
+}
+
+nav button:hover, button:focus, nav a:hover, nav a:focus {
+    background-color: var(--color-focus);
+}
+

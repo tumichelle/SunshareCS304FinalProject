@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<h1>Search Page </h1>
+
+<p>Use search! to search for terms in posts. </p>
+<p>Use filter! by typing either "seeds", "tools", "supplies", or "other" to see posts with those types of items.</p>
+
+<form method="POST" action="{{url_for('search')}}">
+    <label for='search-term'>Search:</label>
+    <input id='search-term' name="search-term">
+    <input type="submit" name="submit-btn" value="search!">
+    <input type="submit" name="submit-btn" value="filter!">
+</form>
+
+{% endblock %}
