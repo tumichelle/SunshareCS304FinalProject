@@ -72,6 +72,13 @@ def get_user_info(conn, uid):
     userinfo = curs.fetchone()
     return userinfo['name'], userinfo['email'], userinfo['zip_code']
 
+def check_logged_in():
+    '''returns true if someone is logged in'''
+    if 'username' in session:
+        return True
+    else:
+        return False
+
 
 def delete_user(conn, username):
     '''deletes from userpass. '''

@@ -12,7 +12,8 @@ def add_post(conn,user_id,item_id,title):
     conn.commit()
 
 def new_post_details(conn):
-    '''get details of the post just made
+    '''
+    get details of the post just made
     '''
     curs = dbi.dict_cursor(conn)
     curs.execute('''select * from post INNER JOIN item USING (item_id) where post_id = last_insert_id()''')

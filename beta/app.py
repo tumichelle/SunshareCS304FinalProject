@@ -4,8 +4,6 @@ from flask import (Flask, render_template, make_response, url_for, request,
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
-# one or the other of these. Defaults to MySQL (PyMySQL)
-# change comment characters to switch to SQLite
 
 import cs304dbi as dbi
 # import cs304dbi_sqlite3 as dbi
@@ -34,7 +32,10 @@ app.config['MAX_CONTENT_LENGTH'] = 1*1024*1024 # 1 MB
 #main page on startup
 @app.route('/')
 def index():
-    return render_template('main.html')
+    if 'username' in session:
+        return render_template('main_logged_in.html')
+    else:
+        return render_template('main.html')
 
 #Shows example feed for visiting without an account
 @app.route('/example_feed/', methods = ['POST'])
@@ -61,17 +62,27 @@ def signup_page():
 @app.route('/insert/', methods = ['GET','POST'])
 def insert_post():
     if request.method == 'GET':
-        #returns a blank form
+        #do not allow user to view post page if not logged in
+        if 'username' not in session:
+            flash('Log in or create an account to post.')
+            return redirect(url_for('index'))
+        #returns a blank form if a user is logged in
         return render_template('insert_post.html')
     else:
         #process the form
         conn = dbi.connect()
-        user_id = int(request.form['user_id'])
+        #user_id = int(request.form['user_id'])
         title = request.form['title']
         description = request.form['description']
         item_type = request.form['item_type']
         item_photo = request.files['item_photo']
         item_id = insert.add_item(conn, description, item_photo, item_type)
+        #get user id from the session
+        if 'username' in session:
+            user_id = session['uid']
+        else:
+            flash('Log in or create an account to post.')
+            return redirect(url_for('index'))
         insert.add_post(conn,user_id,item_id,title)
         search_results = [insert.new_post_details(conn)]
         print(search_results)
@@ -98,6 +109,9 @@ def insert_post():
 #Displays the feed consisting of all of the existing posts
 @app.route('/feed/', methods=['GET'])
 def feed():
+    if 'username' not in session:
+        flash('Log in or create an account to view the full feed.')
+        return redirect(url_for('index'))
     conn = dbi.connect()
     feed_results = search_helper.feed(conn)
     post_author = feed_results[0]['name']
@@ -135,8 +149,14 @@ searches/filters and displays results if found on POST
 @app.route('/search/', methods = ['GET', 'POST'])
 def search():
     if request.method == 'GET':
+        #do not allow user to view if not logged in
+        if 'username' not in session:
+            flash('Log in or create an account to search posts.')
+            return redirect(url_for('index'))
+        #if user is logged in, show them the search page
         return render_template('search.html')
     if request.method == 'POST':
+
         conn = dbi.connect()
         # get the search/filter term
         search_term = request.form.get('search-term')
@@ -169,7 +189,7 @@ def profile():
             flash('you\'re not logged in, can\'t view profile.')
             return redirect(url_for('index'))
     except Exception as err:
-        flash('form submission error '+str(err))
+        flash('error in displaying profile '+str(err))
         return redirect( url_for('index') )
 
 
@@ -226,7 +246,7 @@ def join():
         session['email'] =  email
         session['zipcode'] = zipcode
         #session['visits'] = 1
-        return redirect( url_for('index') )
+        return redirect( url_for('profile') )
     except Exception as err:
         flash('form submission error '+str(err))
         return redirect( url_for('index') )
@@ -254,7 +274,7 @@ def login():
             session['email'] =  email
             session['zipcode'] = zipcode
             #session['visits'] = 1
-            return redirect( url_for('index') )
+            return redirect( url_for('profile') )
         else: 
             flash('login incorrect. Try again or join')
             return redirect( url_for('index'))
