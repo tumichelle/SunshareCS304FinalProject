@@ -58,6 +58,20 @@ def login_page():
 def signup_page():
     return render_template('signup_page.html')
 
+#pic endpoint
+@app.route('/pic/<item_id>')
+def pic(item_id):
+    conn = dbi.connect()
+    curs = dbi.dict_cursor(conn)
+    numrows = curs.execute(
+        '''select filename from picfile where item_id = %s''',
+        [item_id])
+    if numrows == 0:
+        flash('No picture for {}'.format(item_id))
+        return redirect(url_for('index'))
+    row = curs.fetchone()
+    return send_from_directory(app.config['UPLOADS'],row['filename'])
+
 #Insert form that takes in the post info and creates a new post and a new item
 @app.route('/insert/', methods = ['GET','POST'])
 def insert_post():
