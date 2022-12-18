@@ -134,9 +134,11 @@ def feed():
 #Displays all of the post details given the post_id
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post_details(post_id):
+    #prevent users from seeing post pages if not logged in
     if 'username' not in session:
         flash('Log in or create an account to view posts.')
         return redirect(url_for('index'))
+    
     conn = dbi.connect()
     post = [search_helper.search_by_postid(conn, post_id)][0]
     comments = insert.all_comments(conn, post_id)
@@ -164,15 +166,15 @@ def post_details(post_id):
 displays the search/filter page on GET
 searches/filters and displays results if found on POST
 '''
-@app.route('/search/', methods = ['GET', 'POST'])
+@app.route('/search/', methods = ['POST'])
 def search():
-    if request.method == 'GET':
-        #do not allow user to view if not logged in
-        if 'username' not in session:
-            flash('Log in or create an account to search posts.')
-            return redirect(url_for('index'))
-        #if user is logged in, show them the search page
-        return render_template('search.html')
+    # if request.method == 'GET':
+    #     #do not allow user to view if not logged in
+    #     if 'username' not in session:
+    #         flash('Log in or create an account to search posts.')
+    #         return redirect(url_for('index'))
+    #     #if user is logged in, show them the search page
+    #     return render_template('search.html')
     if request.method == 'POST':
 
         conn = dbi.connect()
@@ -191,7 +193,7 @@ def search():
             return render_template('search_results.html', results=search_results)
         else: 
             flash('No results found.')
-            return redirect( url_for('search'))
+            return redirect( url_for('feed'))
 
 @app.route('/profile/')
 def profile():
