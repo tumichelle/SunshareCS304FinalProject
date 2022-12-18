@@ -145,7 +145,8 @@ def post_details(post_id):
     #writing a comment
     if request.method == 'POST':
         print('post')
-        user_id = int(request.form['user_id'])
+        #user_id = int(request.form['user_id'])
+        user_id = session['uid']
         comment = request.form['comment']
         insert.add_comment(conn,user_id,comment,post_id)
         #writing the first comment

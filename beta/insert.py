@@ -49,12 +49,16 @@ def new_comment_details(conn):
     '''get details of the comment just posted
     '''
     curs = dbi.dict_cursor(conn)
-    curs.execute('''select * from comment where comment_id = last_insert_id()''')
+    #curs.execute('''select * from comment where comment_id = last_insert_id()''')
+    curs.execute('''select userpass.username, user.name, comment.text, comment.timestamp from user, comment, userpass where comment.comment_id = last_insert_id() and user.user_id = comment.posted_by and userpass.uid = user.user_id''')
     return curs.fetchall()
 
 def all_comments(conn, post_id):
     '''get details of all the comments for this post
     '''
     curs = dbi.dict_cursor(conn)
-    curs.execute('''select * from comment where post_id = %s''', [post_id])
+    #curs.execute('''select * from comment where post_id = %s''', [post_id])
+    curs.execute('''select userpass.username, user.name, comment.text, comment.timestamp from user, comment, userpass where comment.post_id = %s and user.user_id = comment.posted_by and userpass.uid = user.user_id''', [post_id])
     return curs.fetchall()
+
+    '''select userpass.username, user.name, comment.text, comment.timestamp from user, comment, userpass where comment.post_id = 22 and user.user_id = comment.posted_by and userpass.uid = user.user_id'''

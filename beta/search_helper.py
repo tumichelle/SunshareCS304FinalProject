@@ -62,22 +62,22 @@ def filter(conn, category):
 Returns all posts that are in matching category. If there are multiple categories
 'other', 'seeds', 'supplies', 'tools'
 '''
-def filter_type(conn, categories):
-    curs = dbi.dict_cursor(conn)
+# def filter_type(conn, categories):
+#     curs = dbi.dict_cursor(conn)
     
-    if len(categories) == 1:
-        sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s''' 
-    if len(categories) == 2:
-        sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s''' 
-    if len(categories) == 3:
-        sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s OR item.item_type = %s''' 
-    if len(categories) == 4:
-        sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s OR item.item_type = %s OR item.item_type = %s''' 
+#     if len(categories) == 1:
+#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s''' 
+#     if len(categories) == 2:
+#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s''' 
+#     if len(categories) == 3:
+#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s OR item.item_type = %s''' 
+#     if len(categories) == 4:
+#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s OR item.item_type = %s OR item.item_type = %s''' 
     
 
-    curs.execute(sql, categories) 
-    filtered = curs.fetchall()
-    return filtered
+#     curs.execute(sql, categories) 
+#     filtered = curs.fetchall()
+#     return filtered
 
 
 '''

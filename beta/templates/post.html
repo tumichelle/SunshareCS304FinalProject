@@ -18,7 +18,8 @@
     {% for comment in comments %}
     <li>
         <h4>{{comment['text']}}</h4>
-        <p>User {{comment['posted_by']}}</p>
+        <p>User {{comment['name']}}</p>
+        <p>Username {{comment['username']}}</p>
         <p>{{comment['timestamp']}}</p>
     </li>
     {%endfor%}

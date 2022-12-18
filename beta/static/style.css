@@ -86,3 +86,6 @@ nav button:hover, button:focus, nav a:hover, nav a:focus {
     background-color: var(--color-focus);
 }
 
+#search-bar{
+    float:right;
+}

@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 
 {% block main_content %}
+<div id="search-bar">
+    <form method="POST" action="{{url_for('search')}}">
+        <label for='search-term'>Search:</label>
+        <input id='search-term' name="search-term">
+        <input type="submit" name="submit-btn" value="search!">
+        <input type="submit" name="submit-btn" value="filter!">
+    </form>
+</div>
+
 <p>Posts in your feed:</p>
 
 <ol>
