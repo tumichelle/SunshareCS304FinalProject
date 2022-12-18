@@ -134,6 +134,9 @@ def feed():
 #Displays all of the post details given the post_id
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post_details(post_id):
+    if 'username' not in session:
+        flash('Log in or create an account to view posts.')
+        return redirect(url_for('index'))
     conn = dbi.connect()
     post = [search_helper.search_by_postid(conn, post_id)][0]
     comments = insert.all_comments(conn, post_id)
@@ -174,17 +177,16 @@ def search():
 
         conn = dbi.connect()
         # get the search/filter term
-        search_term = request.form.get('search-term')
 
         # depending on whether searching or filtering, 
         # use appropriate function to get results
         search_results = []
         if request.form.get('submit-btn') == 'search!':
+            search_term = request.form.get('search-term')
             search_results = search_helper.search(conn, search_term)
         elif request.form.get('submit-btn') == 'filter!':
-            print('want to filter')
+            search_term = request.form.get('item_type')
             search_results = search_helper.filter(conn, search_term)
-            print('results', search_results)
         if len(search_results) > 0:
             return render_template('search_results.html', results=search_results)
         else: 
@@ -222,8 +224,6 @@ def join():
         if passwd1 != passwd2:
             flash('passwords do not match')
             return redirect( url_for('index'))
-        #hashed = passwd1
-        #print(passwd1, type(passwd1))
         #make  connection to connect to insert into userpass table
         conn = dbi.connect()
         uid, keyErr, exceptionObject = login_helper.insert_userpass(conn, username, passwd1)
@@ -239,19 +239,6 @@ def join():
         if not user_success:
             flash('error in inserting into user table.')
             return redirect(url_for('index'))
-        # curs = dbi.cursor(conn)
-        # try:
-        #     curs.execute('''INSERT INTO userpass(uid,username,hashed)
-        #                     VALUES(null,%s,%s)''',
-        #                 [username, hashed])
-        #     conn.commit()
-        # except Exception as err:
-        #     flash('That username is taken: {}'.format(repr(err)))
-        #     return redirect(url_for('index'))
-        # curs.execute('select last_insert_id()')
-        # row = curs.fetchone()
-        # uid = row[0]
-        # flash('FYI, you were issued UID {}'.format(uid))
 
         flash('successfully logged in as '+ username)
         session['username'] = username
@@ -260,7 +247,6 @@ def join():
         session['fullname'] = fullname
         session['email'] =  email
         session['zipcode'] = zipcode
-        #session['visits'] = 1
         return redirect( url_for('profile') )
     except Exception as err:
         flash('form submission error '+str(err))
@@ -288,57 +274,15 @@ def login():
             session['fullname'] = fullname
             session['email'] =  email
             session['zipcode'] = zipcode
-            #session['visits'] = 1
             return redirect( url_for('profile') )
         else: 
             flash('login incorrect. Try again or join')
             return redirect( url_for('index'))
 
-        # curs = dbi.dict_cursor(conn)
-        # curs.execute('''SELECT uid,hashed
-        #               FROM userpass
-        #               WHERE username = %s''',
-        #              [username])
-        # row = curs.fetchone()
-        # if row is None:
-        #     # Same response as wrong password,
-        #     # so no information about what went wrong
-        #     flash('login incorrect. Try again or join')
-        #     return redirect( url_for('index'))
-        # hashed = row['hashed']
-        # #making sure it is a valid user with password 
-        # if hashed == passwd:
-        #     flash('successfully logged in as '+username)
-        #     session['username'] = username
-        #     session['uid'] = row['uid']
-        #     session['logged_in'] = True
-        #     #session['visits'] = 1
-        #     return redirect( url_for('user', username=username) )
-        # else:
-        #     flash('login incorrect. Try again or join')
-        #     return redirect( url_for('index'))
     except Exception as err:
         flash('form submission error '+str(err))
         return redirect( url_for('index') )
 
-'''
-handler for routing back to home page after logging in
-'''
-# @app.route('/user/<username>')
-# def user(username):
-#     try:
-#         if 'username' in session:
-#             username = session['username']
-#             uid = session['uid']
-#             #session['visits'] = 1+int(session['visits'])
-#             return redirect(url_for('index'))
-
-#         else:
-#             flash('you are not logged in. Please login or join')
-#             return redirect( url_for('index') )
-#     except Exception as err:
-#         flash('some kind of error '+str(err))
-#         return redirect( url_for('index') )
 
 '''
 logout handler. button to log out not on app at the moment, 
