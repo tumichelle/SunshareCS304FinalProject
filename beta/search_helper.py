@@ -39,6 +39,16 @@ def search_by_postid(conn, post_id):
     return match
 
 '''
+Returns message information with user_id
+'''
+def search_by_userid(conn, user_id):
+    curs = dbi.dict_cursor(conn)
+    sql = '''SELECT * FROM post INNER JOIN user USING (user_id) WHERE user_id = %s '''
+    curs.execute(sql, [user_id])
+    match = curs.fetchone()
+    return match
+
+'''
 Returns all post information
 '''
 def feed(conn):
@@ -48,6 +58,15 @@ def feed(conn):
     matches = curs.fetchall()
     return matches
 
+'''
+Returns all your message logs
+'''
+def all_messages(conn, user_id):
+    curs = dbi.dict_cursor(conn)
+    sql = '''SELECT * FROM messages WHERE sender_id = %s or receiver_id = %s GROUP BY receiver_id ORDER BY receiver_id, conversation_timestamp ASC'''
+    curs.execute(sql, [user_id, user_id])
+    matches = curs.fetchall()
+    return matches
 
 def filter(conn, category):
     curs = dbi.dict_cursor(conn)

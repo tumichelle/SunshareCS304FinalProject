@@ -41,4 +41,9 @@
 
 </form>
 
+<a href="{{url_for('message_details', sender_id=sender_id, receiver_id=post['user_id'])}}">
+    <input class = button type='button' value='Private Message'>
+</a>
+
+
 {% endblock %}

@@ -1,5 +1,6 @@
 #alpha version
 import cs304dbi as dbi
+import datetime, time
 
 def add_post(conn,user_id,item_id,title):
     '''adds a post given the information in the insert form
@@ -57,4 +58,41 @@ def all_comments(conn, post_id):
     '''
     curs = dbi.dict_cursor(conn)
     curs.execute('''select * from comment where post_id = %s''', [post_id])
+
+    return curs.fetchall()
+
+def add_message(conn,sender_id,receiver_id,message):
+    '''
+    inserts a message into the message table
+    '''
+    # Retrieve current timestamp
+    t = time.time()
+    ts = datetime.datetime.fromtimestamp(t).strftime('%Y-%m-%d %H:%M:%S')
+
+    curs = dbi.cursor(conn)
+    curs.execute('''
+        INSERT INTO messages (sender_id,receiver_id,conversation_text,conversation_timestamp)
+        values (%s,%s,%s,%s)''', [sender_id,receiver_id,message,ts])
+    conn.commit()
+    curs.execute('''select last_insert_id()''')
+    row = curs.fetchone()
+    return row[0] #returns the message_id
+
+def new_message_details(conn):
+    '''get details of the message just sent
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''select * from messages where message_id = last_insert_id()''')
+    return curs.fetchall()
+
+def all_messages(conn, sender_id, receiver_id):
+    '''get details of all the messages with user_id
+    '''
+    curs = dbi.dict_cursor(conn)
+    curs.execute('''
+    select * from messages 
+    where sender_id = %s and receiver_id = %s
+    or receiver_id = %s and sender_id = %s
+    ''', 
+    [sender_id,receiver_id,sender_id,receiver_id])
     return curs.fetchall()

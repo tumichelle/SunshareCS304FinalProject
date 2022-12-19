@@ -58,7 +58,45 @@ def login_page():
 def signup_page():
     return render_template('signup_page.html')
 
-#pic endpoint
+#message page
+@app.route('/all_messages/', methods=['GET'])
+def all_messages():
+    conn = dbi.connect()
+    user_id = session.get('uid') 
+    all_messages = search_helper.all_messages(conn, user_id)
+    print("all messages: ", all_messages)
+    return render_template('all_messages.html', messages=all_messages, user_id=user_id)
+
+#Displays all of the message details given a sender id and receiver id 
+@app.route('/message/<sender_id>/<receiver_id>', methods=['GET','POST'])
+def message_details(sender_id, receiver_id):
+    conn = dbi.connect()
+
+    # Retrieve messages b/t sender and receiver
+    messages = list(insert.all_messages(conn, sender_id, receiver_id))
+
+    print("messages: ", messages)
+    print("args: ", request.args)
+
+    if request.method == 'GET':
+        print('get')
+        return render_template('message.html', messages=messages, sender_id=sender_id, receiver_id=receiver_id)
+    if request.method == 'POST':
+        print('POSTING HERE')
+        print(messages)
+
+        # Add message to DB
+        message = request.form['message']
+        insert.add_message(conn, sender_id, receiver_id, message)
+        messages += insert.new_message_details(conn)
+
+        print("messages:")
+        print(messages)
+        flash('Message sent successfully')
+
+        return render_template('message.html', messages=messages, sender_id=sender_id, receiver_id=receiver_id)
+
+#display photo of an item
 @app.route('/pic/<item_id>')
 def pic(item_id):
     conn = dbi.connect()
@@ -135,26 +173,35 @@ def feed():
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post_details(post_id):
     conn = dbi.connect()
+
     post = [search_helper.search_by_postid(conn, post_id)][0]
     comments = insert.all_comments(conn, post_id)
+
     print(comments)
     #post viewing
     if request.method == 'GET':
-        print('get')
-        return render_template('post.html', post=post, comments=comments)
+        # Retrieve ID of viewer
+        user_id = session.get('uid') 
+        
+        print("sender: ", user_id)
+        print("receiver: ", post['user_id'])
+
+        return render_template('post.html', post=post, comments=comments, sender_id=user_id)
     #writing a comment
     if request.method == 'POST':
         print('post')
         user_id = int(request.form['user_id'])
         comment = request.form['comment']
         insert.add_comment(conn,user_id,comment,post_id)
+
         #writing the first comment
         if len(comments) == 0:
             comments = insert.new_comment_details(conn)
         else:
             comments += insert.new_comment_details(conn)
         flash('Comment submitted')
-        return render_template('post.html', post=post, comments=comments)
+
+        return render_template('post.html', post=post, comments=comments, sender_id=user_id)
 
 '''
 displays the search/filter page on GET

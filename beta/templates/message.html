@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+{% for message in messages %}
+<p>YOU: {{message['sender_id']}} RECIPIENT:{{message['receiver_id']}}</p>
+<p>{{message['sender_id']}}: {{message['conversation_text']}} {{message['conversation_timestamp']}}</p>
+{%endfor%}
+
+<form method="POST" action="{{url_for('message_details', sender_id=sender_id, receiver_id=receiver_id)}}">
+
+    <fieldset>
+    <legend>Send message:</legend>
+    <table>
+    <!-- <tr><td><label for="user_id">User ID:</label></td>
+        <td><input id="user_id" type="text" name="user_id"></td></tr> -->
+    <tr><td><label for="message">Type here:</label></td>
+        <td><input id="message" type="text" name="message"></td></tr>
+    </table>
+    </fieldset>
+
+    <p> <input class = button type='submit' value='Send Message'> </p>
+
+</form>
+
+{% endblock %}
