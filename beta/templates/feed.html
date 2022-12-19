@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 
 {% block main_content %}
+<div id="search-bar">
+    <form method="POST" action="{{url_for('search')}}">
+        <!-- <label for='search-term'>Search:</label> -->
+        <input id='search-term' name="search-term">
+        <input type="submit" name="submit-btn" value="search!">
+        <p>OR
+        <select id="item_type" name="item_type">
+            <option value="seeds">Seeds</option>
+            <option value="supplies">Supplies</option>
+            <option value="tools">Tools</option>
+            <option value="other">Other</option>
+        </select>
+        <input type="submit" name="submit-btn" value="filter!"></p>
+    </form>
+</div>
+
 <p>Posts in your feed:</p>
 
 <ol>
@@ -8,5 +24,24 @@
     <li><a href="{{url_for('post_details', post_id=post.post_id)}}">{{ post.title }} posted on {{ post.timestamp }} by {{ post.name }}</a></li>
 {% endfor %}
 </ol>
+
+{% for post in posts %}
+<div class="post">
+    <div class="post-title">
+        <p>{{ post.title }}</p>
+    </div>
+    <div class="posted-by">
+        from {{ post.name }}
+    </div>
+    <div class="post-time">
+        <a href="{{url_for('post_details', post_id=post.post_id)}}"><p>{{ post.timestamp }}</p></a>
+    </div>
+    <!-- {% if item_id != '' and src != '' %}
+    <div class="post-image">
+        <p><img src="{{url_for('pic', item_id=post['item_id'])}}" alt="{{post['filename']}}"></p>
+    </div>
+    {% endif %} -->
+</div>    
+{% endfor %}
 
 {% endblock %}

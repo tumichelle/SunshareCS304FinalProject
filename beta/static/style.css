@@ -86,3 +86,25 @@ nav button:hover, button:focus, nav a:hover, nav a:focus {
     background-color: var(--color-focus);
 }
 
+#search-bar{
+    float:right;
+}
+
+.post{
+    background: whitesmoke;
+    width: 600px;
+    margin: auto;
+    margin-bottom: 60px;
+    margin-top: 60px;
+    border: 1px solid #EDEEEE;
+    border-radius: 5px;
+    padding: 5%;
+}
+.post-title{
+    font-size: larger;
+}
+
+.post-title .posted-by .post-time{
+    padding: 15px;
+    margin: 30px;
+}
