@@ -22,7 +22,7 @@ Returns ___ of what matches
 def search(conn, search_key):
     search_key = '%'+search_key+'%'
     curs = dbi.dict_cursor(conn)
-    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) WHERE title LIKE %s or description LIKE %s '''
+    sql = '''SELECT * FROM post WHERE title LIKE %s or description LIKE %s '''
     curs.execute(sql, [search_key,search_key])
     matches = curs.fetchall()
     #print(type(matches))
@@ -33,7 +33,7 @@ Returns post information given a post_id
 '''
 def search_by_postid(conn, post_id):
     curs = dbi.dict_cursor(conn)
-    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) WHERE post_id = %s '''
+    sql = '''SELECT * FROM post WHERE post_id = %s '''
     curs.execute(sql, [post_id])
     match = curs.fetchone()
     return match
@@ -53,10 +53,20 @@ Returns all post information
 '''
 def feed(conn):
     curs = dbi.dict_cursor(conn)
-    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) INNER JOIN user USING (user_id) ORDER BY timestamp DESC'''
+    sql = '''SELECT * FROM post INNER JOIN user USING (user_id) ORDER BY timestamp DESC'''
     curs.execute(sql) 
     matches = curs.fetchall()
     return matches
+
+'''
+Returns all items for one post
+'''
+def get_items(conn, post_id):
+    curs = dbi.dict_cursor(conn)
+    sql = '''SELECT * FROM item WHERE post_id = %s'''
+    curs.execute(sql, [post_id])
+    items = curs.fetchall()
+    return items
 
 '''
 Returns all your message logs
@@ -72,7 +82,7 @@ def filter(conn, category):
     curs = dbi.dict_cursor(conn)
     #category  = '"'+category+'"'
     print(category)
-    sql = '''SELECT * FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s ''' 
+    sql = '''SELECT * FROM post WHERE item.item_type = %s ''' 
     curs.execute(sql, [category]) 
     filtered = curs.fetchall()
     return filtered

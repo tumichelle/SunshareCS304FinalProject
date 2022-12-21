@@ -125,20 +125,29 @@ def insert_post():
         conn = dbi.connect()
         #user_id = int(request.form['user_id'])
         title = request.form['title']
-        description = request.form['description']
-        item_type = request.form['item_type']
-        item_photo = request.files['item_photo']
-        item_id = insert.add_item(conn, description, item_photo, item_type)
+        num_items = int(request.form['num_items'])
         #get user id from the session
         if 'username' in session:
             user_id = session['uid']
         else:
             flash('Log in or create an account to post.')
             return redirect(url_for('index'))
-        insert.add_post(conn,user_id,item_id,title)
-        search_results = [insert.new_post_details(conn)]
-        print(search_results)
-        flash('Post created successfully')
+        insert.add_post(conn,user_id,num_items,title)
+        post_id = insert.new_post_id(conn)
+        print("new post id:" + str(post_id))
+        return render_template('add_items.html', post_id=post_id, title = title, num_items = num_items)
+        
+
+@app.route('/add-items/<post_id>/<num_items>', methods = ['POST'])
+def add_items(post_id, num_items):
+    num_items = int(num_items)
+    conn = dbi.connect()
+    #num_items = request.args.get('num_items')
+    for i in range(1, num_items+1):
+        description = request.form['description' + str(i)]
+        item_type = request.form['item_type' + str(i)]
+        item_photo = request.files['item_photo' + str(i)]
+        item_id = insert.add_item(conn, post_id, description, item_photo, item_type)
 
         #name, save, and insert item_photo into the picfile table
         user_filename = item_photo.filename
@@ -146,7 +155,6 @@ def insert_post():
         filename = secure_filename('{}.{}'.format(item_id,ext))
         pathname = os.path.join(app.config['UPLOADS'],filename)
         item_photo.save(pathname)
-        conn = dbi.connect()
         curs = dbi.dict_cursor(conn)
         curs.execute(
             '''
@@ -156,7 +164,11 @@ def insert_post():
         )
         conn.commit()
         flash('file upload successful')
-        return render_template('search_results.html', src=url_for('pic',item_id=item_id), results=search_results)
+        
+   
+    flash('Post created successfully')
+    return redirect(url_for('post_details', post_id = post_id))
+
 
 #Displays the feed consisting of all of the existing posts
 @app.route('/feed/', methods=['GET'])
@@ -178,11 +190,11 @@ def post_details(post_id):
         return redirect(url_for('index'))
     
     conn = dbi.connect()
-
     post = [search_helper.search_by_postid(conn, post_id)][0]
+    num_items = int(post['num_items'])
     comments = insert.all_comments(conn, post_id)
+    items = search_helper.get_items(conn, post_id)
 
-    print(comments)
     #post viewing
     if request.method == 'GET':
         # Retrieve ID of viewer
@@ -191,12 +203,13 @@ def post_details(post_id):
         print("sender: ", user_id)
         print("receiver: ", post['user_id'])
 
-        return render_template('post.html', post=post, comments=comments, sender_id=user_id)
+        return render_template('post.html', post=post, comments=comments, sender_id=user_id, items=items, num_items = num_items)
     #writing a comment
     if request.method == 'POST':
         print('post')
         #user_id = int(request.form['user_id'])
         user_id = session['uid']
+
         comment = request.form['comment']
         insert.add_comment(conn,user_id,comment,post_id)
 
@@ -207,7 +220,7 @@ def post_details(post_id):
             comments += insert.new_comment_details(conn)
         flash('Comment submitted')
 
-        return render_template('post.html', post=post, comments=comments, sender_id=user_id)
+        return render_template('post.html', post=post, comments=comments, sender_id=user_id, items=items, num_items = num_items)
 
 '''
 displays the search/filter page on GET

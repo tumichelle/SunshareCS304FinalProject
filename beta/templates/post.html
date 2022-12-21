@@ -5,13 +5,20 @@
 
 <ul>
     <li><h2>{{post['title']}}</h2>
-    <p>{{post['description']}}</p>
     <p>{{post['timestamp']}}</p>
-    <!-- display photo -->
-    {% if item_id != '' and src != '' %}
-    <p><img src="{{url_for('pic', item_id=post['item_id'])}}" alt="{{post['filename']}}"></p>
-    {% endif %}
     </li>
+
+    {% for i in range(num_items) %}
+    <li>
+        <p>Item #{{ i+1 }}</p>
+        <p>Description: {{items[i]['description']}}</p>
+        <p>Item Type: {{items[i]['item_type']}}</p>
+            <!-- display photo -->
+        {% if item_id != '' and src != '' %}
+        <p><img src="{{url_for('pic', item_id=items[i]['item_id'])}}" alt="{{post['filename']}}"></p>
+        {% endif %}
+    </li>
+    {%endfor%}
 </ul>
 
 <ul>

@@ -2,32 +2,32 @@
 import cs304dbi as dbi
 import datetime, time
 
-def add_post(conn,user_id,item_id,title):
+def add_post(conn,user_id,num_items,title):
     '''adds a post given the information in the insert form
     '''
     curs = dbi.cursor(conn)
     curs.execute('''
-        insert into post(user_id,item_id,title)
+        insert into post(user_id,num_items,title)
         values (%s,%s,%s)''',
-        [user_id,item_id,title])
+        [user_id,num_items,title])
     conn.commit()
 
-def new_post_details(conn):
+def new_post_id(conn):
     '''
-    get details of the post just made
+    get post_id of the post just made
     '''
-    curs = dbi.dict_cursor(conn)
-    curs.execute('''select * from post INNER JOIN item USING (item_id) where post_id = last_insert_id()''')
+    curs = dbi.cursor(conn)
+    curs.execute('''select last_insert_id() from post''')
     return curs.fetchone()
 
-def add_item(conn, description, item_photo, item_type):
+def add_item(conn, post_id, description, item_photo, item_type):
     '''adds an item given the information in the insert form
     '''
     curs = dbi.cursor(conn)
     curs.execute('''
-        insert into item(description,item_photo,item_type)
-        values (%s,%s,%s)''',
-        [description,item_photo,item_type])
+        insert into item(post_id, description,item_photo,item_type)
+        values (%s, %s,%s,%s)''',
+        [post_id, description,item_photo,item_type])
     conn.commit()
     curs.execute('''select last_insert_id()''')
     row = curs.fetchone()
