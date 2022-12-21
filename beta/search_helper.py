@@ -22,11 +22,14 @@ Returns ___ of what matches
 def search(conn, search_key):
     search_key = '%'+search_key+'%'
     curs = dbi.dict_cursor(conn)
-    sql = '''SELECT * FROM post WHERE title LIKE %s or description LIKE %s '''
+    #sql = '''SELECT * FROM post WHERE title LIKE %s or description LIKE %s '''
+    sql = '''select distinct * from post, item where (item.description LIKE %s or post.title LIKE %s) and item.post_id = post.post_id'''
     curs.execute(sql, [search_key,search_key])
     matches = curs.fetchall()
     #print(type(matches))
     return matches
+
+    
 
 '''
 Returns post information given a post_id
@@ -87,27 +90,6 @@ def filter(conn, category):
     filtered = curs.fetchall()
     return filtered
 
-'''
-Returns all posts that are in matching category. If there are multiple categories
-'other', 'seeds', 'supplies', 'tools'
-'''
-# def filter_type(conn, categories):
-#     curs = dbi.dict_cursor(conn)
-    
-#     if len(categories) == 1:
-#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s''' 
-#     if len(categories) == 2:
-#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s''' 
-#     if len(categories) == 3:
-#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s OR item.item_type = %s''' 
-#     if len(categories) == 4:
-#         sql = '''SELECT post_id FROM post INNER JOIN item USING (item_id) WHERE item.item_type = %s OR item.item_type = %s OR item.item_type = %s OR item.item_type = %s''' 
-    
-
-#     curs.execute(sql, categories) 
-#     filtered = curs.fetchall()
-#     return filtered
-
 
 '''
 This only allow to search by one zip. 
@@ -122,12 +104,7 @@ def filter_zip(conn, zipcode):
 if __name__ == '__main__':
     dbi.conf('sunshare_db')  # only once
     conn = dbi.connect() # as often as necessary
-    # result = search(conn, 'drill')
-    # print('result',result)
-    # result2 = search(conn, 'charger')
-    # print('result',result2)
-
-    filter_result = filter(conn, 'seeds')
-    print('result', filter_result)
+    search_result = search(conn, 'winter')
+    print('result', search_result)
 
     
