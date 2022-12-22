@@ -3,7 +3,7 @@
 {% block main_content %}
 <div id="search-bar">
     <form method="POST" action="{{url_for('search')}}">
-        <!-- <label for='search-term'>Search:</label> -->
+        <label for='search-term'>Search:</label>
         <input id='search-term' name="search-term">
         <input class="button" type="submit" name="submit-btn" value="search!">
         <p>OR
