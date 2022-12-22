@@ -228,13 +228,6 @@ searches/filters and displays results if found on POST
 '''
 @app.route('/search/', methods = ['POST'])
 def search():
-    # if request.method == 'GET':
-    #     #do not allow user to view if not logged in
-    #     if 'username' not in session:
-    #         flash('Log in or create an account to search posts.')
-    #         return redirect(url_for('index'))
-    #     #if user is logged in, show them the search page
-    #     return render_template('search.html')
     if request.method == 'POST':
 
         conn = dbi.connect()

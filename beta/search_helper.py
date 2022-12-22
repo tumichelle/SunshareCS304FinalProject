@@ -1,18 +1,5 @@
 import cs304dbi as dbi
 
-'''
-NOTES:
-
-- search keys that are passed should be pre processed, perhaps only searching one thing at a time? the function i've written will only search 
-- don't need to check for validation of category because will just be check box?
-- how to get it to search by multiple zip codes, I think i found a way to do this but do we want that?
-
-Filtering/sorting
-Add filter options to search page: type, zip code 
-Searching
-Add search bar
-Searches in title of posts and item description
-'''
 
 '''
 Searchs in title of posts and item description.
@@ -23,8 +10,10 @@ def search(conn, search_key):
     search_key = '%'+search_key+'%'
     curs = dbi.dict_cursor(conn)
     #sql = '''SELECT * FROM post WHERE title LIKE %s or description LIKE %s '''
-    sql = '''select distinct * from post, item where (item.description LIKE %s or post.title LIKE %s) and item.post_id = post.post_id'''
-    curs.execute(sql, [search_key,search_key])
+    #sql = '''select distinct * from post, item where (item.description LIKE %s or post.title LIKE %s) and item.post_id = post.post_id'''
+    #sql = '''select distinct * from post INNER JOIN item using (post_id) where item.description LIKE %s or post.title LIKE %s'''
+    sql = '''select * FROM item JOIN post on item.post_id = post.post_id JOIN user on post.user_id = user.user_id where item.description LIKE %s or post.title LIKE %s'''
+    curs.execute(sql, [search_key, search_key])
     matches = curs.fetchall()
     #print(type(matches))
     return matches
@@ -86,6 +75,7 @@ def filter(conn, category):
     #category  = '"'+category+'"'
     print(category)
     sql = '''SELECT * FROM post WHERE item.item_type = %s ''' 
+    sql = '''select * FROM item JOIN post on item.post_id = post.post_id JOIN user on post.user_id = user.user_id where item.item_type LIKE %s'''
     curs.execute(sql, [category]) 
     filtered = curs.fetchall()
     return filtered
@@ -104,7 +94,7 @@ def filter_zip(conn, zipcode):
 if __name__ == '__main__':
     dbi.conf('sunshare_db')  # only once
     conn = dbi.connect() # as often as necessary
-    search_result = search(conn, 'winter')
+    search_result = filter(conn, 'seeds')
     print('result', search_result)
 
     

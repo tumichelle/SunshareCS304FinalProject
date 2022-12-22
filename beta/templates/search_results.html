@@ -7,13 +7,14 @@
         <input id='search-term' name="search-term">
         <input type="submit" name="submit-btn" value="search!">
         <p>OR
-        <select id="item_type" name="item_type">
-            <option value="seeds">Seeds</option>
-            <option value="supplies">Supplies</option>
-            <option value="tools">Tools</option>
-            <option value="other">Other</option>
-        </select>
-        <input type="submit" name="submit-btn" value="filter!"></p>
+            <select id="item_type" name="item_type">
+                <option value="seeds">Seeds</option>
+                <option value="supplies">Supplies</option>
+                <option value="tools">Tools</option>
+                <option value="other">Other</option>
+            </select>
+            <input type="submit" name="submit-btn" value="filter!">
+        </p>
     </form>
 </div>
 
@@ -21,8 +22,32 @@
 
 <ul>
     {% for result in results %}
-    <li><a href="{{url_for('post_details', post_id=result.post_id)}}">{{ result.title }} posted on {{ result.timestamp }} by {{ result.name }}</a></li>
+    <li><a href="{{url_for('post_details', post_id=result.post_id)}}">{{ result.title }} posted on {{ result.timestamp}}
+            by {{ result.name }}</a></li>
+    <p>Item: {{ result.description}}</p>
+    <p>{{result}}</p>
     {%endfor%}
 </ul>
+
+{% for post in posts %}
+<div class="post">
+    <div class="post-title">
+        <a href="{{url_for('post_details', post_id=post.post_id)}}">
+            <p>{{ post.title }}</p>
+        </a>
+    </div>
+    <div class="posted-by">
+        from {{ post.name }}
+    </div>
+    <div class="post-time">
+        <p>{{ post.timestamp }}</p>
+    </div>
+    <!-- {% if item_id != '' and src != '' %}
+    <div class="post-image">
+        <p><img src="{{url_for('pic', item_id=post['item_id'])}}" alt="{{post['filename']}}"></p>
+    </div>
+    {% endif %} -->
+</div>
+{% endfor %}
 
 {% endblock %}
