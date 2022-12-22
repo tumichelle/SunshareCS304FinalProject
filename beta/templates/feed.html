@@ -5,7 +5,7 @@
     <form method="POST" action="{{url_for('search')}}">
         <!-- <label for='search-term'>Search:</label> -->
         <input id='search-term' name="search-term">
-        <input type="submit" name="submit-btn" value="search!">
+        <input class="button" type="submit" name="submit-btn" value="search!">
         <p>OR
         <select id="item_type" name="item_type">
             <option value="seeds">Seeds</option>
@@ -13,7 +13,7 @@
             <option value="tools">Tools</option>
             <option value="other">Other</option>
         </select>
-        <input type="submit" name="submit-btn" value="filter!"></p>
+        <input class="button" type="submit" name="submit-btn" value="filter!"></p>
     </form>
 </div>
 
