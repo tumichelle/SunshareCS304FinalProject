@@ -181,6 +181,27 @@ def feed():
     post_author = feed_results[0]['name']
     return render_template('feed.html', posts=feed_results, author = post_author)
 
+#my posts page
+@app.route('/my_posts/', methods=['GET'])
+def my_posts():
+    if 'username' not in session:
+        flash('Log in or create an account to view your posts.')
+        return redirect(url_for('index'))
+    conn = dbi.connect()
+    user_id = session.get('uid') 
+    feed_results = search_helper.my_posts(conn, user_id)
+    return render_template('my_posts.html', posts=feed_results)
+
+#delete a post
+@app.route('/delete_post/<post_id>', methods=['POST'])
+def delete_post(post_id):
+    conn = dbi.connect()
+    insert.delete_post(conn, post_id)
+    insert.delete_items(conn, post_id)
+    user_id = session.get('uid') 
+    feed_results = search_helper.my_posts(conn, user_id)
+    return render_template('my_posts.html', posts=feed_results)
+
 #Displays all of the post details given the post_id
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post_details(post_id):

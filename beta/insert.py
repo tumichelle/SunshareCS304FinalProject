@@ -12,6 +12,24 @@ def add_post(conn,user_id,num_items,title):
         [user_id,num_items,title])
     conn.commit()
 
+def delete_post(conn,post_id):
+    '''deletes a post given the post_id
+    '''
+    curs = dbi.cursor(conn)
+    curs.execute('''
+        delete from post where post_id = %s''',
+        [post_id])
+    conn.commit()
+
+def delete_items(conn,post_id):
+    '''deletes items given the post_id
+    '''
+    curs = dbi.cursor(conn)
+    curs.execute('''
+        delete from item where post_id = %s''',
+        [post_id])
+    conn.commit()
+
 def new_post_id(conn):
     '''
     get post_id of the post just made

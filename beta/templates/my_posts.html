@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+{% for post in posts %}
+<div class="post">
+    <div class="post-title">
+        <a href="{{url_for('post_details', post_id=post.post_id)}}"><p>{{ post.title }}</p></a>
+    </div>
+    <div class="post-time">
+        <p>{{ post.timestamp }}</p>
+    </div>
+    <!-- {% if item_id != '' and src != '' %}
+    <div class="post-image">
+        <p><img src="{{url_for('pic', item_id=post['item_id'])}}" alt="{{post['filename']}}"></p>
+    </div>
+    {% endif %} -->
+
+    <form method="POST" action="{{url_for('delete_post', post_id=post['post_id'])}}">
+        <p> <input class = button type='submit' value='Delete Post'> </p>
+    </form>
+</div>    
+{% endfor %}
+
+{% endblock %}

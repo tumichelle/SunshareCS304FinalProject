@@ -51,6 +51,16 @@ def feed(conn):
     return matches
 
 '''
+Returns all post information
+'''
+def my_posts(conn, user_id):
+    curs = dbi.dict_cursor(conn)
+    sql = '''SELECT * FROM post INNER JOIN user USING (user_id) where user_id = %s ORDER BY timestamp DESC'''
+    curs.execute(sql, [user_id]) 
+    matches = curs.fetchall()
+    return matches
+
+'''
 Returns all items for one post
 '''
 def get_items(conn, post_id):
