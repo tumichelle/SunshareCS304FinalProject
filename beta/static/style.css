@@ -223,3 +223,12 @@ button {
     background: whitesmoke;
     margin: 2%
 }
+
+#conversation {
+    border-width: 2px;
+    border-style: solid;
+    padding: 2%;
+    border-radius: 12px;
+    background: whitesmoke;
+    margin: 2%
+}

@@ -2,24 +2,34 @@
 
 {% block main_content %}
 
-{% for message in messages %}
-<p>YOU: {{message['sender_id']}} RECIPIENT:{{message['receiver_id']}}</p>
-<p>{{message['sender_id']}}: {{message['conversation_text']}} {{message['conversation_timestamp']}}</p>
-{%endfor%}
+<div id="conversation">
+    {% for message in messages %}
+    <p>YOU: {{session['uid']}}</p>
+    {% if message['sender_id']==session['uid'] %}
+    <p>RECIPIENT: {{message['receiver_id']}}</p>
+    {% else %}
+    <p>RECIPIENT: {{message['sender_id']}}</p>
+
+    {%endif%}
+    <div class="message">
+        <p>{{message['sender_id']}}: {{message['conversation_text']}} {{message['conversation_timestamp']}}</p>
+    </div>
+    {%endfor%}
+</div>
 
 <form method="POST" action="{{url_for('message_details', sender_id=sender_id, receiver_id=receiver_id)}}">
 
     <fieldset>
-    <legend>Send message:</legend>
-    <table>
-    <!-- <tr><td><label for="user_id">User ID:</label></td>
-        <td><input id="user_id" type="text" name="user_id"></td></tr> -->
-    <tr><td><label for="message">Type here:</label></td>
-        <td><input id="message" type="text" name="message"></td></tr>
-    </table>
+        <legend>Send message:</legend>
+        <table>
+            <tr>
+                <td><label for="message">Type here:</label></td>
+                <td><input id="message" type="text" name="message"></td>
+            </tr>
+        </table>
     </fieldset>
 
-    <p> <input class = button type='submit' value='Send Message'> </p>
+    <p> <input class=button type='submit' value='Send Message'> </p>
 
 </form>
 
