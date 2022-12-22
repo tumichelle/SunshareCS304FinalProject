@@ -7,18 +7,20 @@
 <form method="POST" action="{{url_for('insert_post')}}" enctype="multipart/form-data">
 
     <fieldset>
-    <legend>Create Post Here:</legend>
-    <table>
-    <!-- <tr><td><label for="user_id">User ID:</label></td>
-        <td><input id="user_id" type="text" name="user_id"></td></tr> -->
-    <tr><td><label for="title">Title:</label></td>
-        <td><input id="title" type="text" name="title"></td></tr>
-    <tr><td><label for="num_items">Number of Items:</label></td>
-        <td><input id="num_items" type="number" name="num_items"></td></tr>
-    </table>
+        <legend>Create Post Here:</legend>
+        <table>
+            <tr>
+                <td><label for="title">Title:</label></td>
+                <td><input id="title" type="text" name="title"></td>
+            </tr>
+            <tr>
+                <td><label for="num_items">Number of Items:</label></td>
+                <td><input id="num_items" type="number" name="num_items"></td>
+            </tr>
+        </table>
     </fieldset>
 
-    <p> <input class = button type='submit' value='Add items to your post'> </p>
+    <p> <input class=button type='submit' value='Add items to your post'> </p>
 
 </form>
 

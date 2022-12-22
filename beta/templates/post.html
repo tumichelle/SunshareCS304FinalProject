@@ -1,26 +1,39 @@
 {% extends "base.html" %}
 
 {% block main_content %}
-<h1>Results</h1>
+<!-- <h1>Results</h1> -->
+<!-- 
+<h2>{{post['title']}}</h2>
+<p>{{post['timestamp']}}</p> -->
 
-<ul>
-    <li>
-        <h2>{{post['title']}}</h2>
-        <p>{{post['timestamp']}}</p>
-    </li>
+
+
+<div class="post-page">
+
+    <div class="post-heading">
+        <div class="postpage-title">
+            {{post['title']}}
+            <div class="post-info">
+                <p>at {{post['timestamp']}}</p>
+            </div>
+        </div>
+    </div>
 
     {% for i in range(num_items) %}
-    <li>
-        <p>Item #{{ i+1 }}</p>
-        <p>Description: {{items[i]['description']}}</p>
-        <p>Item Type: {{items[i]['item_type']}}</p>
+    <!-- post body start -->
+    <div class="post-contents">
+        <p>{{items[i]['description']}}</p>
+        <div class="item-type">Type: {{items[i]['item_type']}}</div>
         <!-- display photo -->
         {% if item_id != '' and src != '' %}
         <p><img src="{{url_for('pic', item_id=items[i]['item_id'])}}" alt="{{post['filename']}}"></p>
         {% endif %}
-    </li>
+    </div>
+    <!-- post body end -->
     {%endfor%}
-</ul>
+
+
+</div>
 
 <h2> Comments </h2>
 
