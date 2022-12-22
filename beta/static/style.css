@@ -37,10 +37,11 @@ h3 {
 /* for a simple navbar. Talk to Scott if you want drop-downs. */
 nav>ul {
     list-style-type: none;
-    margin: 2px;
+    margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #333;
+    border-radius: 12px;
 }
 
 nav>ul>li {
@@ -86,16 +87,68 @@ nav>ul>li a:hover {
 }
 
 #loggedin-msg {
-    float: right;
     border: #111;
     margin: 2px;
 }
 
 #welcome-msg {
-    /* padding: 5%;
-    margin: 10%;
-    float: inline-start; */
     text-align: justify;
     margin-left: 10%;
     margin-right: 10%;
+}
+
+button {
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 12px;
+}
+
+.button {
+    background-color: #4CAF50;
+    /* Green */
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 12px;
+}
+
+.comment {
+    margin: 20px auto;
+    border-width: 2px;
+    border-style: inset;
+    padding: 2%;
+    width: 50%;
+    position: relative;
+    margin-right: auto;
+    margin-left: 0;
+    border-radius: 12px;
+}
+
+.comment-heading {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    font-size: 14px;
+}
+
+.comment-info {
+    color: rgba(0, 0, 0, 0.5);
+    margin-left: 10px;
+}
+
+.comment-author {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: bold;
+    text-decoration: none;
 }
