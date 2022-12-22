@@ -2,8 +2,10 @@
 */
 
 HTML {
-    --color-header: #290101;  /* color for H1-H6 and others. was deepskyblue but poor contrast. */
-    --color-hilite: #b50000;  /* was red, but this avoids WAVE contrast errors */ 
+    --color-header: #290101;
+    /* color for H1-H6 and others. was deepskyblue but poor contrast. */
+    --color-hilite: #b50000;
+    /* was red, but this avoids WAVE contrast errors */
     --color-focus: #a6cd4e;
     --color-nice: #14c0cc;
     --color-nice2: #2a5c99;
@@ -18,8 +20,8 @@ HTML {
     font-style: italic;
 }
 
-body{
-    margin:30px;
+body {
+    margin: 30px;
 }
 
 h1 {
@@ -27,70 +29,43 @@ h1 {
     color: var(--color-header);
 }
 
-h2, h3 {
+h2,
+h3 {
     color: var(--color-nice);
 }
-    
 
 /* for a simple navbar. Talk to Scott if you want drop-downs. */
-nav > ul {
-    display: flex;
-    flex-direction: row;
-}
-
-nav ul {
+nav>ul {
     list-style-type: none;
-    margin: 0px;
-    padding: 0px;
+    margin: 2px;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
 }
 
-nav > ul > li {
-    flex: 0 0 auto;
-    width: 15em; 
-    margin: 12px
+nav>ul>li {
+    float: left;
 }
 
-nav button, nav a {
+nav>ul>li a {
     display: block;
-    box-sizing: border-box; /* easier to make button and A the same size */
-    width: 100%;
-    height: 40px;
-    padding: 2px;
-    padding-bottom: 5px;
-    /* background-color: var(--color-header); was #3498db */
-    border: 2px solid black;
-    border-radius: 20px;
-    cursor: pointer;
-    /* Firefox uses font -apple-system unless I repeat the font spec here. */
-    font-family: var(--font-family);
-    font-weight: bold;
-    font-size: 1.4rem;
-}
-
-nav button{
-    margin: 20px;
-}
-
-/* Only the top-level buttons are centered; lower ones are left-aligned. */
-nav > ul > li > button , nav > ul > li > a {
+    color: white;
     text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
 }
 
-/* because of the margin trick, this can only be used for the last element */
-
-nav li.right {
-    margin-left: auto;
+/* Change the link color to #111 (black) on hover */
+nav>ul>li a:hover {
+    background-color: #111;
 }
 
-nav button:hover, button:focus, nav a:hover, nav a:focus {
-    background-color: var(--color-focus);
+#search-bar {
+    float: right;
+    margin: 2%
 }
 
-#search-bar{
-    float:right;
-}
-
-.post{
+.post {
     background: whitesmoke;
     width: 600px;
     margin: auto;
@@ -100,11 +75,27 @@ nav button:hover, button:focus, nav a:hover, nav a:focus {
     border-radius: 5px;
     padding: 5%;
 }
-.post-title{
+
+.post-title {
     font-size: larger;
 }
 
-.post-title .posted-by .post-time{
+.post-title .posted-by .post-time {
     padding: 15px;
     margin: 30px;
+}
+
+#loggedin-msg {
+    float: right;
+    border: #111;
+    margin: 2px;
+}
+
+#welcome-msg {
+    /* padding: 5%;
+    margin: 10%;
+    float: inline-start; */
+    text-align: justify;
+    margin-left: 10%;
+    margin-right: 10%;
 }
