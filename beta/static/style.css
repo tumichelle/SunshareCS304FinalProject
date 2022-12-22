@@ -7,7 +7,7 @@ HTML {
     --color-hilite: #b50000;
     /* was red, but this avoids WAVE contrast errors */
     --color-focus: #a6cd4e;
-    --color-nice: #14c0cc;
+    --color-nice: #5673dc;
     --color-nice2: #2a5c99;
     --font-family: Verdana;
     font-family: var(--font-family)
@@ -86,7 +86,7 @@ nav>ul>li a:hover {
 }
 
 #loggedin-msg {
-    float: right;
+    float: top;
     border: #111;
     margin: 2px;
 }
