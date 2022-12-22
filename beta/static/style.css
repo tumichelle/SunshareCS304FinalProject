@@ -113,7 +113,7 @@ nav>ul>li a:hover {
 }
 
 button {
-    background-color: #4CAF50;
+    background-color: var(--color-nice);
     /* Green */
     border: none;
     color: white;
@@ -126,7 +126,7 @@ button {
 }
 
 .button {
-    background-color: #4CAF50;
+    background-color: var(--color-nice);
     /* Green */
     border: none;
     color: white;

@@ -11,7 +11,6 @@ import sys, os, random
 import imghdr
 import search_helper
 import insert
-import cs304login
 import login_helper
 
 app.secret_key = 'your secret here'
