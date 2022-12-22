@@ -1,19 +1,39 @@
 {% extends "base.html" %}
 
 {% block main_content %}
-<h1>All Messages</h1>
 
-<ul>
-        {% for message in messages %}
+
+<!-- <ul>
+    {% for message in messages %}
     <li>
         {% if message.receiver_id == user_id %}
         Conversation with User {{ message.sender_id }}
-        {% else %} 
+        {% else %}
         Conversation with User {{ message.receiver_id }}
         {% endif %}
-        <a href="{{url_for('message_details', sender_id=message.sender_id, receiver_id=message.receiver_id)}}">Go to conversation</a>
+        <a href="{{url_for('message_details', sender_id=message.sender_id, receiver_id=message.receiver_id)}}">Go to
+            conversation</a>
         {% endfor %}
     </li>
-</ul>
+</ul> -->
+
+<div id="all-messages">
+    <h1>All Messages</h1>
+    {% for message in messages %}
+    <!-- post body start -->
+
+    <div class="message">
+        <p>{% if message.receiver_id == user_id %}
+            Conversation with User {{ message.sender_id }}
+            {% else %}
+            Conversation with User {{ message.receiver_id }}
+            {% endif %}</p>
+        <a href="{{url_for('message_details', sender_id=message.sender_id, receiver_id=message.receiver_id)}}">Go to
+            conversation</a>
+    </div>
+    {% endfor %}
+</div>
+
+
 
 {% endblock %}

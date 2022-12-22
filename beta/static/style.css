@@ -9,8 +9,7 @@ HTML {
     --color-focus: #a6cd4e;
     --color-nice: #5673dc;
     --color-nice2: #2a5c99;
-    --font-family: Verdana;
-    font-family: var(--font-family)
+    font-family: Avantgarde, sans-serif
 }
 
 /* For flashed messages; make them stand out using red and italics */
@@ -204,5 +203,23 @@ button {
     border-style: solid;
     border-radius: 12px;
     padding: 5%;
+    margin: 2%
+}
+
+#all-messages {
+    border-width: 2px;
+    border-style: solid;
+    padding: 2%;
+    border-radius: 12px;
+    background: whitesmoke;
+    margin: 2%
+}
+
+.message {
+    border-width: 2px;
+    border-style: solid;
+    padding: 2%;
+    border-radius: 12px;
+    background: whitesmoke;
     margin: 2%
 }
