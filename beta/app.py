@@ -1,4 +1,4 @@
-# alpha version
+# beta version
 from flask import (Flask, render_template, make_response, url_for, request,
                    redirect, flash, session, send_from_directory, jsonify)
 from werkzeug.utils import secure_filename
@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 
 import cs304dbi as dbi
-# import cs304dbi_sqlite3 as dbi
 
 import sys, os, random
 import imghdr
@@ -29,17 +28,17 @@ app.config['TRAP_BAD_REQUEST_ERRORS'] = True
 app.config['UPLOADS'] = 'uploads' # save file uploads to 'uploads' folder
 app.config['MAX_CONTENT_LENGTH'] = 1*1024*1024 # 1 MB
 
-#main page on startup
 @app.route('/')
 def index():
+    '''main page on startup'''
     if 'username' in session:
         return render_template('main_logged_in.html')
     else:
         return render_template('main.html')
 
-#Shows example feed for visiting without an account
 @app.route('/example_feed/', methods = ['POST'])
 def example_feed():
+    '''Shows example feed for visiting without an account'''
     conn = dbi.connect()
     zipcode = request.form['zipcode']
     filtered = search_helper.filter_zip(conn, zipcode)
@@ -48,57 +47,53 @@ def example_feed():
         return render_template('main.html')
     return render_template('example_feed.html', posts = filtered)
 
-#page to sign in with existing account
 @app.route('/login_page/')
 def login_page():
+    '''page to sign in with existing account'''
     return render_template('login_page.html')
 
-#join and create a new account
 @app.route('/signup_page/')
 def signup_page():
+    '''join and create a new account'''
     return render_template('signup_page.html')
 
-#message page
 @app.route('/all_messages/', methods=['GET'])
 def all_messages():
+    '''message page. displays all the messages a user has with others'''
     conn = dbi.connect()
     user_id = session.get('uid') 
     all_messages = search_helper.all_messages(conn, user_id)
     print("all messages: ", all_messages)
-    return render_template('all_messages.html', messages=all_messages, user_id=user_id)
+    return render_template('all_messages.html', 
+            messages=all_messages, 
+            user_id=user_id)
 
-#Displays all of the message details given a sender id and receiver id 
 @app.route('/message/<sender_id>/<receiver_id>', methods=['GET','POST'])
 def message_details(sender_id, receiver_id):
+    '''Displays all of the message details given a sender id and 
+    receiver id '''
     conn = dbi.connect()
 
     # Retrieve messages b/t sender and receiver
     messages = list(insert.all_messages(conn, sender_id, receiver_id))
 
-    print("messages: ", messages)
-    print("args: ", request.args)
-
     if request.method == 'GET':
-        print('get')
-        return render_template('message.html', messages=messages, sender_id=sender_id, receiver_id=receiver_id)
+        return render_template('message.html', messages=messages, 
+            sender_id=sender_id, receiver_id=receiver_id)
     if request.method == 'POST':
-        print('POSTING HERE')
-        print(messages)
-
         # Add message to DB
         message = request.form['message']
         insert.add_message(conn, sender_id, receiver_id, message)
         messages += insert.new_message_details(conn)
 
-        print("messages:")
-        print(messages)
         flash('Message sent successfully')
 
-        return render_template('message.html', messages=messages, sender_id=sender_id, receiver_id=receiver_id)
+        return render_template('message.html', messages=messages, 
+            sender_id=sender_id, receiver_id=receiver_id)
 
-#display photo of an item
 @app.route('/pic/<item_id>')
 def pic(item_id):
+    '''display photo of an item'''
     conn = dbi.connect()
     curs = dbi.dict_cursor(conn)
     numrows = curs.execute(
@@ -110,9 +105,10 @@ def pic(item_id):
     row = curs.fetchone()
     return send_from_directory(app.config['UPLOADS'],row['filename'])
 
-#Insert form that takes in the post info and creates a new post and a new item
 @app.route('/insert/', methods = ['GET','POST'])
 def insert_post():
+    '''Insert form that takes in the post info and creates a 
+    new post and a new item'''
     if request.method == 'GET':
         #do not allow user to view post page if not logged in
         if 'username' not in session:
@@ -134,20 +130,21 @@ def insert_post():
             return redirect(url_for('index'))
         insert.add_post(conn,user_id,num_items,title)
         post_id = insert.new_post_id(conn)
-        print("new post id:" + str(post_id))
-        return render_template('add_items.html', post_id=post_id, title = title, num_items = num_items)
+        return render_template('add_items.html', post_id=post_id, 
+            title = title, num_items = num_items)
         
 
 @app.route('/add-items/<post_id>/<num_items>', methods = ['POST'])
 def add_items(post_id, num_items):
+    '''add items to a post, one form for each item specified'''
     num_items = int(num_items)
     conn = dbi.connect()
-    #num_items = request.args.get('num_items')
     for i in range(1, num_items+1):
         description = request.form['description' + str(i)]
         item_type = request.form['item_type' + str(i)]
         item_photo = request.files['item_photo' + str(i)]
-        item_id = insert.add_item(conn, post_id, description, item_photo, item_type)
+        item_id = insert.add_item(conn, post_id, description, 
+            item_photo, item_type)
 
         #name, save, and insert item_photo into the picfile table
         user_filename = item_photo.filename
@@ -164,26 +161,26 @@ def add_items(post_id, num_items):
         )
         conn.commit()
         flash('file upload successful')
-        
    
     flash('Post created successfully')
     return redirect(url_for('post_details', post_id = post_id))
 
 
-#Displays the feed consisting of all of the existing posts
 @app.route('/feed/', methods=['GET'])
 def feed():
+    '''Displays the feed consisting of all of the existing posts'''
     if 'username' not in session:
         flash('Log in or create an account to view the full feed.')
         return redirect(url_for('index'))
     conn = dbi.connect()
     feed_results = search_helper.feed(conn)
     post_author = feed_results[0]['name']
-    return render_template('feed.html', posts=feed_results, author = post_author)
+    return render_template('feed.html', 
+        posts=feed_results, author = post_author)
 
-#my posts page
 @app.route('/my_posts/', methods=['GET'])
 def my_posts():
+    '''my posts page'''
     if 'username' not in session:
         flash('Log in or create an account to view your posts.')
         return redirect(url_for('index'))
@@ -192,9 +189,9 @@ def my_posts():
     feed_results = search_helper.my_posts(conn, user_id)
     return render_template('my_posts.html', posts=feed_results)
 
-#delete a post
 @app.route('/delete_post/<post_id>', methods=['POST'])
 def delete_post(post_id):
+    '''delete a post'''
     conn = dbi.connect()
     insert.delete_post(conn, post_id)
     insert.delete_items(conn, post_id)
@@ -202,9 +199,9 @@ def delete_post(post_id):
     feed_results = search_helper.my_posts(conn, user_id)
     return render_template('my_posts.html', posts=feed_results)
 
-#Displays all of the post details given the post_id
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 def post_details(post_id):
+    '''Displays all of the post details given the post_id'''
     #prevent users from seeing post pages if not logged in
     if 'username' not in session:
         flash('Log in or create an account to view posts.')
@@ -224,11 +221,11 @@ def post_details(post_id):
         print("sender: ", user_id)
         print("receiver: ", post['user_id'])
 
-        return render_template('post.html', post=post, comments=comments, sender_id=user_id, items=items, num_items = num_items)
+        return render_template('post.html', post=post, comments=comments,
+             sender_id=user_id, items=items, num_items = num_items)
     #writing a comment
     if request.method == 'POST':
         print('post')
-        #user_id = int(request.form['user_id'])
         user_id = session['uid']
 
         comment = request.form['comment']
@@ -241,19 +238,18 @@ def post_details(post_id):
             comments += insert.new_comment_details(conn)
         flash('Comment submitted')
 
-        return render_template('post.html', post=post, comments=comments, sender_id=user_id, items=items, num_items = num_items)
+        return render_template('post.html', post=post, comments=comments, 
+            sender_id=user_id, items=items, num_items = num_items)
 
-'''
-displays the search/filter page on GET
-searches/filters and displays results if found on POST
-'''
+
 @app.route('/search/', methods = ['POST'])
 def search():
+    ''' displays the search/filter page on GET s
+    earches/filters and displays results if found on POST'''
     if request.method == 'POST':
 
         conn = dbi.connect()
         # get the search/filter term
-
         # depending on whether searching or filtering, 
         # use appropriate function to get results
         search_results = []
@@ -264,20 +260,23 @@ def search():
             search_term = request.form.get('item_type')
             search_results = search_helper.filter(conn, search_term)
         if len(search_results) > 0:
-            return render_template('search_results.html', results=search_results)
+            return render_template('search_results.html', 
+                results=search_results)
         else: 
             flash('No results found.')
             return redirect( url_for('feed'))
 
 @app.route('/profile/')
 def profile():
+    '''displays logged in user's profile page'''
     try: 
         if 'username' in session:
             username = session['username']
             fullname = session['fullname']
             email = session['email']
             zipcode = session['zipcode']
-            return render_template('profile.html', username=username, fullname=fullname, email=email, zipcode=zipcode,)
+            return render_template('profile.html', username=username, 
+                fullname=fullname, email=email, zipcode=zipcode,)
         else:
             flash('you\'re not logged in, can\'t view profile.')
             return redirect(url_for('index'))
@@ -285,10 +284,9 @@ def profile():
         flash('error in displaying profile '+str(err))
         return redirect( url_for('index') )
 
-
-'''route for creating a new user. redirects to home page.'''
 @app.route('/join/', methods=["POST"])
 def join():
+    '''route for creating a new user. redirects to home page.'''
     try:
         #getting form info
         username = request.form['username']
@@ -317,6 +315,7 @@ def join():
             return redirect(url_for('index'))
 
         flash('successfully logged in as '+ username)
+        #put all the appropriate info in the session
         session['username'] = username
         session['uid'] = uid
         session['logged_in'] = True
@@ -328,11 +327,9 @@ def join():
         flash('form submission error '+str(err))
         return redirect( url_for('index') )
 
-'''
-handler for when login form is filled out
-'''
 @app.route('/login/', methods=["POST"])
 def login():
+    '''handler for when login form is filled out'''
     try:
         #get form data
         username = request.form['username']
@@ -359,13 +356,9 @@ def login():
         flash('form submission error '+str(err))
         return redirect( url_for('index') )
 
-
-'''
-logout handler. button to log out not on app at the moment, 
-adding in beta.
-'''
 @app.route('/logout/', methods = ["POST"])
 def logout():
+    '''logout handler.'''
     try:
         if 'username' in session:
             username = session['username']

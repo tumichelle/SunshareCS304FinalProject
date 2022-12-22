@@ -8,7 +8,6 @@ def do_files(uploads, conn, func):
     '''iterates over all files in the given directory (e.g. 'uploads'),
 invoking function on conn, the full pathname, the filename and the
 digits before the dot (e.g. 123.jpq).
-
     '''
     for name in os.listdir(uploads):
         path = os.path.join(uploads, name)

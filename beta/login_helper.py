@@ -15,8 +15,8 @@ either false or an exception object.
                            bcrypt.gensalt())
     curs = dbi.cursor(conn)
     try: 
-        curs.execute('''INSERT INTO userpass(username, hashed) VALUES(%s, %s)''',
-                     [username, hashed.decode('utf-8')])
+        curs.execute('''INSERT INTO userpass(username, hashed) 
+        VALUES(%s, %s)''',[username, hashed.decode('utf-8')])
         conn.commit()
         curs.execute('select last_insert_id()')
         row = curs.fetchone()
@@ -38,16 +38,17 @@ def insert_user(conn, fullname, uid, zipcode, email):
     '''
     curs = dbi.cursor(conn)
     try: 
-        curs.execute('''INSERT INTO user(user_id, email, name, zip_code) VALUES(%s, %s, %s, %s)''',
-                     [uid, email, fullname, zipcode])
+        curs.execute('''INSERT INTO user(user_id, email, name, zip_code) 
+        VALUES(%s, %s, %s, %s)''', [uid, email, fullname, zipcode])
         conn.commit()
         return True
     except Exception as err:
         return False
 
 def login_user(conn, username, password):
-    '''tries to log the user in given username & password. Returns True if
-success and returns the uid as the second value on success. Otherwise, False, False.'''
+    '''tries to log the user in given username & password. 
+    Returns True if success and returns the uid as the second 
+    value on success. Otherwise, False, False.'''
     curs = dbi.cursor(conn)
     curs.execute('''SELECT uid, hashed FROM userpass WHERE username = %s''',
                  [username])
@@ -66,8 +67,10 @@ success and returns the uid as the second value on success. Otherwise, False, Fa
         return (False, False)
 
 def get_user_info(conn, uid):
+    '''gets a users name, email and zip code using their uid'''
     curs = dbi.dict_cursor(conn)
-    curs.execute('''SELECT email, name, zip_code FROM user WHERE user_id = %s''',
+    curs.execute('''SELECT email, name, zip_code FROM user 
+                WHERE user_id = %s''',
                  [uid])
     userinfo = curs.fetchone()
     return userinfo['name'], userinfo['email'], userinfo['zip_code']

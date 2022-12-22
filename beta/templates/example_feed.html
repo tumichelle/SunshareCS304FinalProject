@@ -3,10 +3,20 @@
 {% block main_content %}
 <p>Posts in your area:</p>
 
-<ol>
 {% for post in posts %}
-    <li><a href="{{url_for('post_details', post_id=post.post_id)}}">{{ post.title }} posted on {{ post.timestamp }} by {{ post.name }}</a></li>
+<div class="post">
+    <div class="post-title">
+        <a href="{{url_for('post_details', post_id=post.post_id)}}">
+            <p>{{ post.title }}</p>
+        </a>
+    </div>
+    <div class="posted-by">
+        from {{ post.name }}
+    </div>
+    <div class="post-time">
+        <p>{{ post.timestamp }}</p>
+    </div>
+</div>
 {% endfor %}
-</ol>
 
 {% endblock %}

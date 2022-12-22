@@ -4,32 +4,41 @@
 <h1>{{title}}</h1>
 
 <!-- Form to create a post -->
-<form method="POST" action="{{ url_for('add_items', post_id=post_id, num_items = num_items) }}" enctype="multipart/form-data">
+<form method="POST" action="{{ url_for('add_items', post_id=post_id, num_items = num_items) }}"
+    enctype="multipart/form-data">
 
     <fieldset>
-    <legend>Add Items Here:</legend>
-    <table>
-    
-    {% for i in range(1, num_items+1) %}
+        <legend>Add Items Here:</legend>
+        <table>
 
-    <tr><td>Item #{{ i }}</td></tr>
-    <tr><td><label for="description{{i}}">Description:</label></td>
-        <td><input id="description{{i}}" type="text" name="description{{i}}"></td></tr>
-    <tr><td><label for="item_type{{i}}">Item Type:</label></td>
-        <td><select id="item_type{{i}}" name="item_type{{i}}">
-            <option value="seeds">Seeds</option>
-            <option value="supplies">Supplies</option>
-            <option value="tools">Tools</option>
-            <option value="other">Other</option>
-        </select></td></tr>
-    <tr><td><label for="item_photo{{i}}">Photo:</label></td>
-        <td><input id="item_photo{{i}}" type="file" name="item_photo{{i}}"></td></tr>
+            {% for i in range(1, num_items+1) %}
 
-    {% endfor %}
-    </table>
+            <tr>
+                <td>Item #{{ i }}</td>
+            </tr>
+            <tr>
+                <td><label for="description{{i}}">Description:</label></td>
+                <td><input id="description{{i}}" type="text" name="description{{i}}"></td>
+            </tr>
+            <tr>
+                <td><label for="item_type{{i}}">Item Type:</label></td>
+                <td><select id="item_type{{i}}" name="item_type{{i}}">
+                        <option value="seeds">Seeds</option>
+                        <option value="supplies">Supplies</option>
+                        <option value="tools">Tools</option>
+                        <option value="other">Other</option>
+                    </select></td>
+            </tr>
+            <tr>
+                <td><label for="item_photo{{i}}">Photo:</label></td>
+                <td><input id="item_photo{{i}}" type="file" name="item_photo{{i}}"></td>
+            </tr>
+
+            {% endfor %}
+        </table>
     </fieldset>
 
-    <p> <input class = button type='submit' value='Create Post'> </p>
+    <p> <input class=button type='submit' value='Create Post'> </p>
 
 </form>
 
